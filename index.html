@@ -1,0 +1,740 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Celestial</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =========================================
+   INTRO SCREEN
+========================================= */
+
+#intro {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    background: #000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+
+    opacity: 1;
+
+    transition:
+        opacity 1.2s ease,
+        visibility 1.2s ease;
+}
+
+/* =========================================
+   BACKGROUND RED GLOW
+========================================= */
+
+.glow {
+    position: absolute;
+
+    width: 45vw;
+    height: 45vw;
+
+    border-radius: 50%;
+
+    background: #e50914;
+
+    filter: blur(120px);
+
+    opacity: 0;
+
+    animation:
+        glowIn
+        3.5s
+        ease
+        forwards;
+}
+
+/* =========================================
+   LIGHT BEAMS
+========================================= */
+
+.beam {
+    position: absolute;
+
+    top: -100%;
+    width: 4px;
+    height: 300%;
+
+    background:
+        linear-gradient(
+            to bottom,
+            transparent,
+            rgba(229, 9, 20, 0.9),
+            transparent
+        );
+
+    filter: blur(5px);
+
+    opacity: 0;
+}
+
+.beam1 {
+    left: 15%;
+    transform: rotate(35deg);
+
+    animation:
+        beamMove
+        3s
+        0.3s
+        ease-out
+        forwards;
+}
+
+.beam2 {
+    left: 40%;
+    transform: rotate(35deg);
+
+    animation:
+        beamMove
+        3s
+        0.6s
+        ease-out
+        forwards;
+}
+
+.beam3 {
+    left: 65%;
+    transform: rotate(35deg);
+
+    animation:
+        beamMove
+        3s
+        0.9s
+        ease-out
+        forwards;
+}
+
+.beam4 {
+    left: 90%;
+    transform: rotate(35deg);
+
+    animation:
+        beamMove
+        3s
+        1.2s
+        ease-out
+        forwards;
+}
+
+/* =========================================
+   LOGO
+========================================= */
+
+.logo {
+    position: relative;
+
+    width: 190px;
+    height: 280px;
+
+    opacity: 0;
+
+    transform:
+        scale(0.25)
+        rotate(-18deg);
+
+    animation:
+        logoReveal
+        2.7s
+        0.5s
+        cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+}
+
+/* =========================================
+   THE CELESTIAL C
+========================================= */
+
+.c {
+    position: absolute;
+
+    inset: 0;
+
+    border:
+        52px
+        solid
+        #e50914;
+
+    border-right-color: transparent;
+
+    border-radius: 50%;
+
+    transform: rotate(-35deg);
+
+    filter:
+        drop-shadow(0 0 8px #e50914)
+        drop-shadow(0 0 25px #e50914)
+        drop-shadow(0 0 70px rgba(229, 9, 20, 0.45));
+}
+
+/* Extra inner highlight */
+
+.c::before {
+    content: "";
+
+    position: absolute;
+
+    inset: -52px;
+
+    border:
+        2px
+        solid
+        rgba(255, 255, 255, 0.35);
+
+    border-right-color: transparent;
+
+    border-radius: 50%;
+
+    opacity: 0;
+
+    animation:
+        shine
+        1s
+        2.3s
+        ease
+        forwards;
+}
+
+/* =========================================
+   CENTER GLOW
+========================================= */
+
+.core {
+    position: absolute;
+
+    width: 35px;
+    height: 35px;
+
+    left: 50%;
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background: #ff1824;
+
+    box-shadow:
+        0 0 20px #e50914,
+        0 0 50px #e50914,
+        0 0 100px rgba(229, 9, 20, 0.5);
+
+    opacity: 0;
+
+    animation:
+        coreIn
+        1.2s
+        2.2s
+        ease
+        forwards;
+}
+
+/* =========================================
+   CELESTIAL TEXT
+========================================= */
+
+.title {
+    position: absolute;
+
+    left: 50%;
+
+    top:
+        calc(50% + 185px);
+
+    transform:
+        translateX(-50%);
+
+    color: white;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    letter-spacing: 14px;
+
+    white-space: nowrap;
+
+    opacity: 0;
+
+    filter: blur(12px);
+
+    animation:
+        titleIn
+        1.5s
+        3.1s
+        cubic-bezier(0.16, 1, 0.3, 1)
+        forwards;
+}
+
+/* =========================================
+   RED LINE
+========================================= */
+
+.line {
+    position: absolute;
+
+    left: 50%;
+
+    top:
+        calc(50% + 225px);
+
+    transform:
+        translateX(-50%);
+
+    width: 0;
+    height: 2px;
+
+    background: #e50914;
+
+    box-shadow:
+        0 0 12px #e50914,
+        0 0 30px rgba(229, 9, 20, 0.7);
+
+    animation:
+        lineIn
+        1s
+        3.6s
+        ease
+        forwards;
+}
+
+/* =========================================
+   VIGNETTE
+========================================= */
+
+.vignette {
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        radial-gradient(
+            circle,
+            transparent 15%,
+            rgba(0, 0, 0, 0.9) 100%
+        );
+}
+
+/* =========================================
+   FILM GRAIN
+========================================= */
+
+.grain {
+    position: absolute;
+
+    inset: -50%;
+
+    opacity: 0.045;
+
+    pointer-events: none;
+
+    background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+
+    animation:
+        grainMove
+        0.15s
+        steps(2)
+        infinite;
+}
+
+/* =========================================
+   SKIP BUTTON
+========================================= */
+
+#skip {
+    position: absolute;
+
+    right: 28px;
+    bottom: 25px;
+
+    z-index: 100;
+
+    padding:
+        11px
+        18px;
+
+    border:
+        1px
+        solid
+        rgba(255, 255, 255, 0.25);
+
+    border-radius: 999px;
+
+    background:
+        rgba(255, 255, 255, 0.07);
+
+    color:
+        rgba(255, 255, 255, 0.8);
+
+    backdrop-filter:
+        blur(15px);
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    letter-spacing: 1px;
+
+    opacity: 0;
+
+    animation:
+        skipIn
+        1s
+        3.8s
+        forwards;
+}
+
+#skip:hover {
+    background:
+        rgba(229, 9, 20, 0.25);
+
+    border-color:
+        #e50914;
+
+    color:
+        white;
+}
+
+/* =========================================
+   ANIMATIONS
+========================================= */
+
+@keyframes glowIn {
+
+    0% {
+        opacity: 0;
+        transform: scale(0.2);
+    }
+
+    45% {
+        opacity: 0.35;
+        transform: scale(1);
+    }
+
+    100% {
+        opacity: 0.08;
+        transform: scale(1.5);
+    }
+}
+
+@keyframes beamMove {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            translateX(-50vw)
+            rotate(35deg);
+    }
+
+    30% {
+        opacity: 0.8;
+    }
+
+    100% {
+        opacity: 0;
+
+        transform:
+            translateX(50vw)
+            rotate(35deg);
+    }
+}
+
+@keyframes logoReveal {
+
+    0% {
+        opacity: 0;
+
+        transform:
+            scale(0.25)
+            rotate(-18deg);
+    }
+
+    35% {
+        opacity: 1;
+    }
+
+    70% {
+        transform:
+            scale(1.08)
+            rotate(3deg);
+    }
+
+    100% {
+        opacity: 1;
+
+        transform:
+            scale(1)
+            rotate(0deg);
+    }
+}
+
+@keyframes shine {
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes coreIn {
+
+    to {
+        opacity: 0.4;
+    }
+}
+
+@keyframes titleIn {
+
+    0% {
+        opacity: 0;
+
+        letter-spacing: 30px;
+
+        filter:
+            blur(12px);
+    }
+
+    100% {
+        opacity: 1;
+
+        letter-spacing: 11px;
+
+        filter:
+            blur(0);
+    }
+}
+
+@keyframes lineIn {
+
+    to {
+        width: 250px;
+    }
+}
+
+@keyframes skipIn {
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes grainMove {
+
+    0% {
+        transform:
+            translate(0, 0);
+    }
+
+    25% {
+        transform:
+            translate(2%, -1%);
+    }
+
+    50% {
+        transform:
+            translate(-1%, 2%);
+    }
+
+    75% {
+        transform:
+            translate(1%, 1%);
+    }
+
+    100% {
+        transform:
+            translate(0, 0);
+    }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+
+    .logo {
+        width: 135px;
+        height: 205px;
+    }
+
+    .c {
+        border-width: 37px;
+    }
+
+    .title {
+        font-size: 15px;
+
+        letter-spacing: 8px;
+
+        top:
+            calc(50% + 145px);
+    }
+
+    .line {
+        top:
+            calc(50% + 180px);
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="intro">
+
+    <!-- Background -->
+    <div class="glow"></div>
+
+    <!-- Moving beams -->
+    <div class="beam beam1"></div>
+    <div class="beam beam2"></div>
+    <div class="beam beam3"></div>
+    <div class="beam beam4"></div>
+
+    <!-- Logo -->
+    <div class="logo">
+
+        <div class="c"></div>
+
+        <div class="core"></div>
+
+    </div>
+
+    <!-- Text -->
+    <div class="title">
+        CELESTIAL
+    </div>
+
+    <!-- Red underline -->
+    <div class="line"></div>
+
+    <!-- Screen effects -->
+    <div class="vignette"></div>
+
+    <div class="grain"></div>
+
+    <!-- Skip -->
+    <button id="skip">
+        SKIP INTRO
+    </button>
+
+</div>
+
+
+<script>
+
+/* =========================================
+   YOUR ACTUAL CELESTIAL WEBSITE
+========================================= */
+
+const CELESTIAL_URL =
+    "https://sites.google.com/view/celestial-2/home";
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const intro =
+    document.getElementById("intro");
+
+const skip =
+    document.getElementById("skip");
+
+
+/* =========================================
+   ENTER CELESTIAL
+========================================= */
+
+function enterCelestial() {
+
+    /*
+       Fade the intro to black first.
+       This makes the page transition
+       feel much more cinematic.
+    */
+
+    intro.style.opacity = "0";
+
+    /*
+       Wait for the fade to finish,
+       then go to the real Celestial site.
+    */
+
+    setTimeout(function () {
+
+        window.location.href =
+            CELESTIAL_URL;
+
+    }, 1200);
+}
+
+
+/* =========================================
+   AUTOMATIC REDIRECT
+========================================= */
+
+/*
+   Intro duration:
+   approximately 6 seconds.
+*/
+
+setTimeout(function () {
+
+    enterCelestial();
+
+}, 6000);
+
+
+/* =========================================
+   SKIP BUTTON
+========================================= */
+
+skip.addEventListener(
+    "click",
+    function () {
+
+        enterCelestial();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
+```
