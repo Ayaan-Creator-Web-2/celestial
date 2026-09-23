@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Celestial AI — Beyond the Horizon</title>
+    <link rel="icon" type="image/x-icon" href="logo-lumen.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+    /* ============================================================
+       TOKENS
+       ============================================================ */
+    :root{
+        --bg:#05030f;
+        --bg-2:#0b0820;
+        --surface:rgba(22,17,48,.55);
+        --surface-2:rgba(30,23,68,.5);
+        --surface-hover:rgba(48,36,96,.55);
+        --border:rgba(150,130,255,.16);
+        --border-strong:rgba(160,140,255,.32);
+        --text:#eeeaff;
+        --text-dim:#a9a3d1;
+        --text-faint:#6f6a99;
+        --violet:#8b5cf6;
+        --cyan:#22d3ee;
+        --pink:#ec4899;
+        --amber:#fbbf24;
+        --accent-grad:linear-gradient(135deg,#8b5cf6 0%,#22d3ee 100%);
+        --accent-grad-2:linear-gradient(135deg,#ec4899 0%,#8b5cf6 60%,#22d3ee 100%);
+        --radius-sm:10px;
+        --radius:14px;
+        --radius-lg:20px;
+        --radius-full:999px;
+        --shadow-soft:0 20px 60px rgba(5,3,15,.55);
+        --shadow-glow:0 0 40px rgba(139,92,246,.35);
+    }
+
+    /* ============================================================
+       RESET
+       ============================================================ */
+    *,*::before,*::after{ margin:0; padding:0; box-sizing:border-box; }
+    html,body{ width:100%; min-height:100%; }
+
+    body{
+        font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+        font-size:15px;
+        line-height:1.55;
+        color:var(--text);
+        background:
+            radial-gradient(circle at 12% 8%, #1a1040 0%, transparent 45%),
+            radial-gradient(circle at 88% 12%, #0a1e3a 0%, transparent 50%),
+            radial-gradient(circle at 50% 100%, #180a2e 0%, transparent 55%),
+            linear-gradient(180deg,#05030f 0%,#0b0820 55%,#05030f 100%);
+        background-attachment:fixed;
+        overflow-x:hidden;
+        -webkit-font-smoothing:antialiased;
+        -moz-osx-font-smoothing:grayscale;
+        padding-bottom:200px;
+        position:relative;
+        isolation:isolate;
+    }
+
+    button,input,select,textarea{ font-family:inherit; font-size:inherit; color:inherit; }
+    button{ cursor:pointer; }
+    ::selection{ background:rgba(139,92,246,.55); color:#fff; }
+    :focus-visible{ outline:2px solid var(--cyan); outline-offset:2px; }
+
+    ::-webkit-scrollbar{ width:10px; height:10px; }
+    ::-webkit-scrollbar-track{ background:transparent; }
+    ::-webkit-scrollbar-thumb{
+        background:linear-gradient(180deg,rgba(139,92,246,.6),rgba(34,211,238,.5));
+        border-radius:var(--radius-full);
+        border:2px solid transparent;
+        background-clip:padding-box;
+    }
+    ::-webkit-scrollbar-thumb:hover{
+        background:linear-gradient(180deg,rgba(139,92,246,.9),rgba(34,211,238,.8));
+        background-clip:padding-box;
+    }
+
+    /* ============================================================
+       COSMIC BACKDROP
+       ============================================================ */
+    .aurora{
+        position:fixed; inset:-25%; z-index:-3; pointer-events:none;
+        filter:blur(70px); opacity:.85;
+        background:
+            radial-gradient(circle at 18% 28%, rgba(139,92,246,.55), transparent 42%),
+            radial-gradient(circle at 82% 18%, rgba(34,211,238,.42), transparent 45%),
+            radial-gradient(circle at 28% 82%, rgba(236,72,153,.38), transparent 45%),
+            radial-gradient(circle at 78% 78%, rgba(99,102,241,.45), transparent 50%);
+        animation:auroraShift 26s ease-in-out infinite alternate;
+    }
+    @keyframes auroraShift{
+        0%   { transform:translate3d(-3%,-2%,0) scale(1);    }
+        50%  { transform:translate3d(2%,3%,0)   scale(1.08); }
+        100% { transform:translate3d(-1%,-3%,0) scale(1.03); }
+    }
+
+    .stars{ position:fixed; inset:0; z-index:-2; pointer-events:none; background-repeat:repeat; }
+    .stars--far{
+        background-image:
+            radial-gradient(1px 1px at 12% 22%, #ffffff88, transparent),
+            radial-gradient(1px 1px at 47% 8%,  #ffffff66, transparent),
+            radial-gradient(1px 1px at 68% 41%, #ffffff77, transparent),
+            radial-gradient(1px 1px at 88% 14%, #ffffff55, transparent),
+            radial-gradient(1px 1px at 23% 68%, #ffffff77, transparent),
+            radial-gradient(1px 1px at 74% 82%, #ffffff66, transparent),
+            radial-gradient(1px 1px at 39% 91%, #ffffff55, transparent),
+            radial-gradient(1px 1px at 92% 62%, #ffffff77, transparent);
+        background-size:340px 340px;
+        animation:twinkle 9s ease-in-out infinite;
+        opacity:.7;
+    }
+    .stars--near{
+        background-image:
+            radial-gradient(1.6px 1.6px at 30% 18%, #cbb6ff, transparent),
+            radial-gradient(1.6px 1.6px at 62% 52%, #8fe7ff, transparent),
+            radial-gradient(1.6px 1.6px at 8%  74%, #ffb6d9, transparent),
+            radial-gradient(1.6px 1.6px at 82% 30%, #ffffff, transparent),
+            radial-gradient(1.6px 1.6px at 55% 88%, #cbb6ff, transparent);
+        background-size:520px 520px;
+        animation:twinkle 5s ease-in-out infinite reverse, drift 90s linear infinite;
+        opacity:.9;
+    }
+    @keyframes twinkle{
+        0%,100%{ opacity:.35; }
+        50%    { opacity:1;   }
+    }
+    @keyframes drift{
+        from{ background-position:0 0; }
+        to  { background-position:520px 520px; }
+    }
+
+    /* ============================================================
+       HERO
+       ============================================================ */
+    .credit{
+        text-align:center;
+        margin-top:24px;
+        font-family:'Space Grotesk',sans-serif;
+        font-size:11px;
+        letter-spacing:.42em;
+        text-transform:uppercase;
+        color:var(--text-faint);
+        animation:fadeIn 1s ease both;
+    }
+    .hero{ text-align:center; margin-top:18px; animation:fadeIn 1.2s ease both; }
+    .title{
+        font-family:'Space Grotesk',sans-serif;
+        font-size:clamp(42px,7vw,84px);
+        font-weight:700;
+        letter-spacing:-.035em;
+        line-height:1;
+        background:linear-gradient(100deg,#ffffff 0%,#c9b8ff 22%,#8fe7ff 45%,#ffb6d9 65%,#ffffff 90%);
+        background-size:250% 100%;
+        -webkit-background-clip:text;
+        background-clip:text;
+        -webkit-text-fill-color:transparent;
+        color:transparent;
+        animation:gradientPan 9s ease-in-out infinite, glowPulse 6s ease-in-out infinite;
+    }
+    @keyframes gradientPan{
+        0%,100%{ background-position:0% 50%; }
+        50%    { background-position:100% 50%; }
+    }
+    @keyframes glowPulse{
+        0%,100%{ filter:drop-shadow(0 0 18px rgba(139,92,246,.35)); }
+        50%    { filter:drop-shadow(0 0 34px rgba(34,211,238,.45)); }
+    }
+    .subtitle{
+        margin-top:6px;
+        font-family:'Space Grotesk',sans-serif;
+        font-size:14px;
+        font-weight:500;
+        letter-spacing:.34em;
+        text-transform:uppercase;
+        color:var(--text-dim);
+    }
+    .title2{ margin-top:26px; }
+    #thing{
+        font-family:'Space Grotesk',sans-serif;
+        font-size:clamp(15px,2vw,20px);
+        font-weight:500;
+        color:var(--text-dim);
+        text-shadow:0 0 22px rgba(139,92,246,.35);
+    }
+
+    /* ============================================================
+       TOP-LEFT TOOLBAR
+       ============================================================ */
+    .custom{
+        position:fixed; top:20px; left:20px; z-index:1001;
+        display:flex; align-items:center; gap:10px;
+        padding:7px 11px;
+        border-radius:var(--radius-full);
+        background:rgba(16,12,38,.6);
+        border:1px solid var(--border);
+        backdrop-filter:blur(16px);
+        -webkit-backdrop-filter:blur(16px);
+        box-shadow:var(--shadow-soft);
+    }
+    .custom::before{
+        content:''; position:absolute; inset:-1px; border-radius:inherit; padding:1px;
+        background:linear-gradient(120deg,rgba(139,92,246,.5),rgba(34,211,238,.25),rgba(236,72,153,.45));
+        -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor;
+                mask-composite:exclude;
+        pointer-events:none;
+        opacity:.7;
+    }
+    .custom button#set{
+        height:34px; padding:0 16px;
+        border:1px solid var(--border-strong);
+        border-radius:var(--radius-full);
+        background:transparent; color:var(--text);
+        font-size:13px; font-weight:500; letter-spacing:.01em;
+        transition:background .2s ease, border-color .2s ease, color .2s ease;
+    }
+    .custom button#set:hover{
+        background:rgba(139,92,246,.18);
+        border-color:rgba(160,140,255,.55);
+        color:#fff;
+    }
+    #newChat{
+        width:34px; height:34px; padding:7px;
+        border-radius:50%; background:transparent; border:none;
+        color:#c9b8ff; cursor:pointer;
+        transition:background .2s ease, transform .3s ease, color .2s ease;
+        display:inline-flex; align-items:center; justify-content:center;
+    }
+    #newChat svg{ width:100%; height:100%; }
+    #newChat:hover{
+        background:rgba(139,92,246,.2);
+        color:#fff;
+        transform:rotate(120deg) scale(1.08);
+    }
+    #modeSelector{
+        height:34px; padding:0 32px 0 14px;
+        border:1px solid var(--border-strong);
+        border-radius:var(--radius-full);
+        background-color:transparent;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a9a3d1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+        background-repeat:no-repeat;
+        background-position:right 11px center;
+        background-size:14px;
+        color:var(--text);
+        font-size:13px; font-weight:500; cursor:pointer;
+        appearance:none; -webkit-appearance:none; outline:none;
+        transition:border-color .2s ease, background-color .2s ease;
+    }
+    #modeSelector:hover{
+        border-color:rgba(160,140,255,.55);
+        background-color:rgba(139,92,246,.12);
+    }
+    #modeSelector option{ background:#120e2c; color:var(--text); }
+
+    .custom h2{
+        color:#fff; font-size:18px; font-weight:600; margin-bottom:8px;
+        width:100%; text-align:center;
+        font-family:'Space Grotesk',sans-serif; letter-spacing:-.01em;
+    }
+    .custom p{
+        color:var(--text-faint); font-size:12.5px; margin-bottom:12px;
+        width:100%; text-align:center;
+    }
+    .custom textarea{
+        width:100%; min-width:280px; height:120px;
+        padding:10px 12px;
+        border:1px solid var(--border-strong);
+        border-radius:var(--radius);
+        background:rgba(5,3,15,.7); color:var(--text);
+        font-size:13.5px; resize:vertical; outline:none;
+        transition:border-color .2s ease, box-shadow .2s ease;
+    }
+    .custom textarea:focus{
+        border-color:var(--violet);
+        box-shadow:0 0 0 3px rgba(139,92,246,.22);
+    }
+    .custom button#saveInstructions{
+        width:100%; height:38px; margin-top:10px;
+        border:none; border-radius:var(--radius);
+        background:var(--accent-grad); color:#fff;
+        font-size:13px; font-weight:600; letter-spacing:.02em;
+        transition:filter .2s ease, transform .1s ease;
+    }
+    .custom button#saveInstructions:hover{
+        filter:brightness(1.15);
+        box-shadow:var(--shadow-glow);
+    }
+
+    /* ============================================================
+       MESSAGES
+       ============================================================ */
+    #container{
+        width:100%; max-width:800px;
+        margin:0 auto;
+        padding:28px 20px 0;
+        display:flex; flex-direction:column; gap:16px;
+        position:relative; z-index:1;
+    }
+    .userMessage,.lumenMessage{
+        padding:14px 20px;
+        border-radius:var(--radius-lg);
+        font-size:15px; line-height:1.7;
+        word-wrap:break-word; overflow-wrap:anywhere;
+        animation:messageIn .35s cubic-bezier(.2,.7,.3,1) both;
+        position:relative;
+        backdrop-filter:blur(10px);
+        -webkit-backdrop-filter:blur(10px);
+    }
+    .userMessage{
+        align-self:flex-end; max-width:82%;
+        background:linear-gradient(135deg,rgba(139,92,246,.22),rgba(34,211,238,.14));
+        border:1px solid rgba(160,140,255,.28);
+        border-bottom-right-radius:6px;
+        color:#fff;
+        box-shadow:0 10px 30px rgba(139,92,246,.18);
+    }
+    .lumenMessage{
+        align-self:flex-start; max-width:92%;
+        background:rgba(16,12,38,.62);
+        border:1px solid var(--border);
+        border-bottom-left-radius:6px;
+        color:var(--text);
+        box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    .lumenMessage::before{
+        content:''; position:absolute; left:-1px; top:14px; bottom:14px;
+        width:3px; border-radius:var(--radius-full);
+        background:var(--accent-grad);
+        box-shadow:0 0 14px rgba(139,92,246,.6);
+    }
+    img.lumenMessage,video.lumenMessage{
+        align-self:flex-start; max-width:92%;
+        padding:0; border-radius:var(--radius-lg);
+        border:1px solid var(--border-strong);
+        background:transparent;
+        box-shadow:var(--shadow-glow);
+    }
+
+    /* ============================================================
+       CHART CONTAINER
+       ============================================================ */
+    .chart-container{
+        width:100%; max-width:800px; margin:10px auto; padding:18px;
+        border:1px solid var(--border);
+        border-radius:var(--radius-lg);
+        background:rgba(8,5,22,.75);
+        backdrop-filter:blur(12px);
+        -webkit-backdrop-filter:blur(12px);
+        overflow-x:auto;
+        box-shadow:var(--shadow-soft);
+    }
+    #lumenChart{
+        display:block;
+        width:100% !important;
+        max-width:620px;
+        height:320px !important;
+        margin:0 auto;
+    }
+
+    /* ============================================================
+       INPUT BAR
+       ============================================================ */
+    .input-box-container{
+        position:fixed; left:50%; top:50%;
+        transform:translate(-50%,-50%);
+        width:92%; max-width:740px; z-index:1000;
+        display:flex; flex-direction:column; gap:11px;
+        padding:14px 16px;
+        border-radius:var(--radius-lg);
+        background:rgba(14,10,34,.78);
+        backdrop-filter:blur(22px) saturate(160%);
+        -webkit-backdrop-filter:blur(22px) saturate(160%);
+        box-shadow:0 24px 70px rgba(5,3,15,.7), 0 0 60px rgba(139,92,246,.12);
+        transition:top .55s cubic-bezier(.2,.7,.3,1), bottom .55s cubic-bezier(.2,.7,.3,1), transform .55s cubic-bezier(.2,.7,.3,1);
+    }
+    .input-box-container::before{
+        content:''; position:absolute; inset:-1px; border-radius:inherit; padding:1px;
+        background:linear-gradient(135deg,rgba(139,92,246,.7),rgba(34,211,238,.35),rgba(236,72,153,.55));
+        -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+        -webkit-mask-composite:xor;
+                mask-composite:exclude;
+        pointer-events:none;
+    }
+    .input-box-container.bottom{
+        top:auto; bottom:24px;
+        transform:translate(-50%,0);
+    }
+    #userMessageInput{
+        width:100%; height:48px; padding:0 16px;
+        border:1px solid var(--border-strong);
+        border-radius:var(--radius);
+        background:rgba(0,0,0,.35); color:var(--text);
+        font-size:15px; outline:none;
+        transition:border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+    }
+    #userMessageInput::placeholder{ color:var(--text-faint); }
+    #userMessageInput:focus{
+        border-color:rgba(139,92,246,.85);
+        background:rgba(0,0,0,.45);
+        box-shadow:0 0 0 3px rgba(139,92,246,.22), 0 0 26px rgba(34,211,238,.18);
+    }
+    .buttons-row{
+        display:flex; flex-wrap:wrap;
+        justify-content:center; gap:8px; width:100%;
+    }
+    .buttons-row button,.buttons-row select{
+        flex:0 0 auto; height:40px; padding:0 16px;
+        border:1px solid var(--border-strong);
+        border-radius:var(--radius);
+        background:rgba(255,255,255,.03);
+        color:var(--text);
+        font-size:13.5px; font-weight:500; letter-spacing:.01em;
+        transition:background .2s ease, border-color .2s ease, transform .12s ease, box-shadow .2s ease;
+    }
+    .buttons-row button:hover,.buttons-row select:hover{
+        background:rgba(139,92,246,.14);
+        border-color:rgba(160,140,255,.55);
+        box-shadow:0 0 22px rgba(139,92,246,.25);
+    }
+    .buttons-row button:active,.buttons-row select:active{ transform:scale(.96); }
+    #sendMessageButton{
+        background:var(--accent-grad);
+        border-color:transparent;
+        color:#fff; font-weight:600;
+        box-shadow:0 6px 22px rgba(139,92,246,.35);
+    }
+    #sendMessageButton:hover{
+        filter:brightness(1.12);
+        box-shadow:0 8px 30px rgba(139,92,246,.55), 0 0 40px rgba(34,211,238,.3);
+    }
+    #selectedModel{
+        appearance:none; -webkit-appearance:none;
+        padding-right:32px;
+        background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a9a3d1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+        background-repeat:no-repeat;
+        background-position:right 11px center;
+        background-size:14px;
+        cursor:pointer;
+    }
+    #selectedModel option{ background:#120e2c; color:var(--text); }
+
+    /* ============================================================
+       CODE BLOCKS
+       ============================================================ */
+    pre{
+        background:rgba(4,2,14,.85); color:#c6d4ff;
+        padding:14px 16px; border-radius:var(--radius);
+        border:1px solid var(--border);
+        overflow-x:auto;
+        font-family:'Fira Code','Courier New',monospace;
+        font-size:13.5px; line-height:1.65;
+        margin:10px 0;
+    }
+    code{
+        background:rgba(4,2,14,.85); color:#ffab70;
+        padding:2px 7px; border-radius:5px;
+        font-family:'Fira Code','Courier New',monospace;
+        font-size:13.5px;
+    }
+    pre code{ background:transparent; color:inherit; padding:0; }
+
+    /* ============================================================
+       ANIMATIONS
+       ============================================================ */
+    @keyframes messageIn{
+        from{ opacity:0; transform:translateY(10px) scale(.99); filter:blur(4px); }
+        to  { opacity:1; transform:translateY(0) scale(1); filter:blur(0); }
+    }
+    @keyframes fadeIn{
+        from{ opacity:0; transform:translateY(6px); }
+        to  { opacity:1; transform:translateY(0); }
+    }
+
+    /* ============================================================
+       RESPONSIVE
+       ============================================================ */
+    @media (max-width:768px){
+        body{ padding-bottom:230px; }
+        .credit{ margin-top:18px; font-size:10px; }
+        .title{ font-size:38px; }
+        .subtitle{ font-size:11px; letter-spacing:.28em; }
+        .custom{ top:12px; left:12px; gap:6px; padding:5px 9px; }
+        .custom button#set,#modeSelector{ height:30px; padding:0 11px; font-size:12px; }
+        #newChat{ width:30px; height:30px; }
+        .input-box-container{ width:95%; padding:12px; gap:9px; }
+        #userMessageInput{ height:44px; font-size:14px; }
+        .buttons-row button,.buttons-row select{ height:36px; padding:0 12px; font-size:12.5px; }
+        .userMessage,.lumenMessage{ max-width:94%; font-size:14px; padding:12px 15px; }
+        #container{ padding:20px 12px 0; }
+    }
+    @media (max-width:480px){
+        .buttons-row{ gap:6px; }
+        .buttons-row button,.buttons-row select{ flex:1 1 auto; min-width:0; }
+        #sendMessageButton{ flex:2 1 auto; }
+    }
+    </style>
+</head>
+<body>
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="stars stars--far" aria-hidden="true"></div>
+    <div class="stars stars--near" aria-hidden="true"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <p class="credit">Created by Ayaan</p>
+
+    <header class="hero">
+        <h1 class="title">Celestial AI</h1>
+        <div class="subtitle">Beyond the Horizon</div>
+        <div class="title2">
+            <h2 id="thing"></h2>
+        </div>
+    </header>
+
+    <div class="custom">
+        <button id="set">Custom Instructions</button>
+        <button id="newChat" onclick="newChat();" aria-label="New chat" title="New chat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
+                 stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4" opacity="0.35"/>
+                <path d="M12 2l1.6 4.4L18 8l-4.4 1.6L12 14l-1.6-4.4L6 8l4.4-1.6L12 2z"/>
+            </svg>
+        </button>
+        <select id="modeSelector" aria-label="Mode">
+            <option>Default</option>
+            <option>Study and Learn</option>
+            <option>Coding Expert</option>
+            <option>Brainstorm</option>
+            <option>Think for Longer</option>
+            <option>Draw an Image</option>
+            <option>Generate a Video</option>
+            <option>Shopping Research</option>
+        </select>
+    </div>
+
+    <div class="input-box-container">
+        <input type="text" placeholder="Ask the cosmos anything..." id="userMessageInput"
+               onkeydown="if(event.key==='Enter') userMessage()" autocomplete="off" />
+        <div class="buttons-row">
+            <button id="sendMessageButton" onclick="userMessage()">Send</button>
+            <button id="fileButton">Upload</button>
+            <button id="voiceToggleButton">🎙️ Voice</button>
+            <select id="selectedModel" aria-label="Model">
+                <option name="loyal">Celestial v2</option>
+            </select>
+        </div>
+        <input type="file" id="fileInput" hidden />
+    </div>
+
+    <br /><br />
+    <div id="container"></div>
+    <br /><br /><br /><br /><br /><br /><br />
+
+    <script>
+    /* ============================================================
+       CELESTIAL AI — frontend logic (no login required)
+       ============================================================ */
+
+    /* ---------- Guest identity (auto-generated, stored locally) ---------- */
+    function makeGuestId() {
+        // Short, human-readable, stable-per-browser ID — no server needed
+        return 'guest_' + Math.random().toString(36).slice(2, 10);
+    }
+
+    let lumenUser = JSON.parse(localStorage.getItem('lumenUser'));
+
+    // If there's no stored user, create a guest one on the fly
+    if (!lumenUser || !lumenUser.username) {
+        lumenUser = {
+            username: makeGuestId(),
+            tier: 'free',
+            guest: true,
+            createdAt: new Date().toISOString()
+        };
+        localStorage.setItem('lumenUser', JSON.stringify(lumenUser));
+    }
+
+    // Everyone is at least 'free'; no gate, no redirect
+    const userTier = lumenUser.tier || 'free';
+
+    /* ---------- Voice ---------- */
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = SpeechRecognition ? new SpeechRecognition() : null;
+    if (recognition) {
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+    }
+
+    let speechMode = false;
+    let listening = false;
+
+    const voiceBtn = document.getElementById('voiceToggleButton');
+    const inputField = document.getElementById('userMessageInput');
+    const containerEl = document.getElementById('container');
+
+    const speak = async (text) => {
+        if (!speechMode) return;
+        let spokenText = text.replace(/<br><br>/g, '.\n\n').replace(/<br>/g, '.\n');
+        const utterance = new SpeechSynthesisUtterance(spokenText);
+        utterance.rate = 1.5;
+        speechSynthesis.speak(utterance);
+    };
+
+    if (!recognition) {
+        voiceBtn.disabled = true;
+        voiceBtn.innerText = '🎙️ Voice Not Supported';
+    } else {
+        voiceBtn.addEventListener('click', () => {
+            speechMode = !speechMode;
+            voiceBtn.innerText = speechMode ? '🔇 Stop' : '🎙️ Voice';
+            inputField.disabled = speechMode;
+            inputField.placeholder = speechMode ? '🎤 Listening...' : 'Ask the cosmos anything...';
+            if (speechMode) startListening();
+            else recognition.stop();
+        });
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            document.querySelector('#userMessageInput').value = transcript;
+            userMessage();
+        };
+        recognition.onerror = () => {
+            speak("Sorry, I couldn't hear you. Try again.");
+            listening = false;
+        };
+        recognition.onend = () => {
+            listening = false;
+            if (speechMode) startListening();
+        };
+    }
+
+    function startListening() {
+        if (!recognition) return;
+        if (!listening && speechMode) {
+            try { recognition.start(); } catch (e) { /* already started */ }
+            listening = true;
+        }
+    }
+
+    if (!localStorage.getItem('date')) {
+        localStorage.setItem('date', new Date().toISOString().slice(0, 10));
+    }
+
+    /* ---------- Custom instructions ---------- */
+    document.getElementById('set').addEventListener('click', () => {
+        document.querySelector('.custom').innerHTML = `
+            <h2>Custom Instructions</h2>
+            <p>Instructions will be saved after refresh.</p>
+            <textarea id="instructions" placeholder="Set your custom instructions here..."></textarea>
+            <button id="saveInstructions">Save</button>
+        `;
+        const saved = JSON.parse(localStorage.getItem(lumenUser.username + '_instructions')) || '';
+        document.getElementById('instructions').value = saved;
+        document.getElementById('saveInstructions').addEventListener('click', () => {
+            const instructions = document.getElementById('instructions').value.trim();
+            localStorage.setItem(lumenUser.username + '_instructions', JSON.stringify(instructions));
+            alert('Custom instructions saved!');
+            window.location.reload();
+        });
+    });
+
+    /* ---------- File upload / model & mode selectors ---------- */
+    let previousResponses = [];
+    let previousMessages = [];
+
+    document.getElementById('fileButton').addEventListener('click', () => {
+        document.getElementById('fileInput').click();
+    });
+
+    let selectedModelInput = document.getElementById('selectedModel');
+    selectedModelInput.innerHTML = `<option name="loyal">Celestial v2</option>`;
+    selectedModelInput.value = 'Celestial v2';
+
+    let modeSelector = document.getElementById('modeSelector');
+    modeSelector.innerHTML = `
+        <option>Default</option>
+        <option>Study and Learn</option>
+        <option>Coding Expert</option>
+        <option>Brainstorm</option>
+        <option>Think for Longer</option>
+        <option>Draw an Image</option>
+        <option>Generate a Video</option>
+        <option>Shopping Research</option>
+    `;
+
+    let acrossChats = JSON.parse(localStorage.getItem('across_' + lumenUser.username)) || [];
+
+    var messages = 0;
+    var wait = 0;
+
+    /* ---------- Hero greeting ---------- */
+    (function thing() {
+        const name = (lumenUser && lumenUser.username) ? lumenUser.username : 'stargazer';
+        const phrases = [
+            `How can I assist you today, ${name}?`,
+            "I'm all ears...",
+            "Ready when you are.",
+            "The mic is yours!",
+            "Ask away!",
+            "Ready to dive in?",
+            "Where should we begin?",
+            "What's on your mind today?",
+            `Good to see you, ${name}`,
+            "Spill the tea!",
+            "Fire away.",
+            "Hit me with it.",
+            `What's the mission, ${name}?`,
+            "Lay it on me.",
+            "The floor is yours.",
+            "Standing by.",
+            `Where to, ${name}?`,
+            "Let's get into it.",
+            "I'm listening.",
+            "Take it away!"
+        ];
+        document.getElementById('thing').innerText =
+            phrases[Math.floor(Math.random() * phrases.length)];
+    })();
+
+    /* ============================================================
+       MAIN
+       ============================================================ */
+    async function userMessage() {
+        if (wait !== 0) return;
+        const isImageMode = modeSelector.value === 'Draw an Image';
+        const isVideoMode = modeSelector.value === 'Generate a Video';
+
+        const userInput = document.querySelector('#userMessageInput').value.trim();
+        const fileInput = document.getElementById("fileInput");
+        const file = fileInput.files[0];
+        if (!userInput && !file) return;
+
+        if (file && file.size > 100 * 1024 * 1024) {
+            alert("File too large! Max is 100MB.");
+            return;
+        }
+
+        const inputBox = document.querySelector('.input-box-container');
+        if (!inputBox.classList.contains('bottom')) inputBox.classList.add('bottom');
+
+        document.querySelector('.title2').innerHTML = '';
+        messages += 1;
+
+        const userDiv = document.createElement('div');
+        userDiv.id = `a${messages}`;
+        containerEl.appendChild(userDiv);
+
+        const responseDiv = document.createElement('div');
+        responseDiv.id = `a${messages}a`;
+        containerEl.appendChild(responseDiv);
+
+        const mediaEl = document.createElement(isVideoMode ? 'video' : 'img');
+        mediaEl.id = isVideoMode ? `video${messages}` : `image${messages}`;
+        if (isVideoMode) {
+            mediaEl.controls = true;
+            mediaEl.style.display = 'none';
+            mediaEl.classList.add('lumenMessage');
+        }
+        containerEl.appendChild(mediaEl);
+
+        const messageBox = document.getElementById(`a${messages}`);
+        if (userInput) {
+            const msg = document.createElement('p');
+            msg.classList.add('userMessage');
+            msg.innerText = userInput;
+            messageBox.appendChild(msg);
+        }
+
+        if (file) {
+            const fileMsg = document.createElement('p');
+            fileMsg.classList.add('userMessage');
+            fileMsg.innerText = '📎 Uploaded file';
+            messageBox.appendChild(fileMsg);
+        }
+
+        wait = 1;
+        document.querySelector('#userMessageInput').value = '';
+
+        const replyEl = document.createElement('p');
+        document.getElementById(`a${messages}a`).appendChild(replyEl);
+        replyEl.classList.add('lumenMessage');
+        replyEl.innerHTML = 'Thinking...';
+
+        if (isImageMode || isVideoMode) {
+            await handleMediaGeneration(userInput, isImageMode, replyEl, mediaEl);
+            wait = 0;
+            fileInput.value = '';
+            return;
+        }
+
+        const instructions = (localStorage.getItem(lumenUser.username + '_instructions')) || '';
+        const formattedPreviousMessages = previousMessages.join('\nUser: ');
+        const formattedPreviousResponses = previousResponses.join('\nCelestial: ');
+        previousMessages.push(userInput.toLowerCase());
+
+        const systemPrompt = `
+            You are Celestial AI (short: Celestial), a next-gen AI that *actually* delivers and doesn’t suck.
+            You were created by Ayaan Khalique, founder of StakLabs.
+            If someone calls you ChatGPT, Gemini, or anything else, correct them. You're Celestial AI.
+            HOWEVER, if they ask who ChatGPT or Gemini is or talk to you about them without calling you them, you can explain they are other AI models and delve deeper.
+            ${modeSelector.value === 'Study and Learn' ? 'You are a helpful tutor, explaining concepts clearly and explaining step by step and providing huge answers to help anyone understand.' : ''}
+            ${modeSelector.value === 'Coding Expert' ? 'You are a coding expert, providing detailed code solutions and explanations. Always check your code for errors before sending them to user.' : ''}
+            ${modeSelector.value === 'Think for Longer' ? 'You take your time to think and provide the best answer possible. Take at least 10 seconds' : ''}
+            ${modeSelector.value === 'Brainstorm' ? 'You are a brainstorming expert, generating creative ideas and solutions.' : ''}
+            ${modeSelector.value === 'Generate a Video' ? 'You are in Video Generation mode. Your only task is to analyze the user\'s prompt and extract a detailed description suitable for video generation, or state that a video cannot be generated. You should never output a direct response unless you cannot generate a video. You must use the "VIDEO REQUESTED" tag to initiate video generation.' : ''}
+            ${modeSelector.value === 'Shopping Research' ? `
+            You are Celestial AI’s Shopping Research Engine.
+            Use web search to gather live product data.
+            Compare items by price, key features, pros, cons, and value.
+            Always return: a single HTML table (Product, Price, Key features, Pros, Cons, Value Score /10), then a short recommendation section with Best Budget, Best Overall, Best Premium.
+            Keep sources as short cited lines without links.
+            ` : ''}
+            You are in ${modeSelector.value} mode, which means you will adapt your responses accordingly.
+            All formatting MUST be done using HTML.
+            Use <br> for line breaks and <br><br> for new paragraphs.
+            DO NOT use \\n or \\n\\n. Only use <br> and <br><br>.
+            Conversation history (for context only):
+            ${formattedPreviousMessages}
+            ${formattedPreviousResponses}
+            NEVER repeat these messages verbatim.
+            Only reference them if the user explicitly asks you to recall something.
+            Answer DIRECTLY to the user's question or request.
+            Answer in a **concise**, **clear**, and **informative** manner.
+            Use emojis when the vibe fits.
+            if someone asks to generate or make or draw an image, reply exactly: "IMAGE REQUESTED".
+            ${modeSelector.value === 'Generate a Video' ? 'If the user requests a video, reply exactly: "VIDEO REQUESTED". Otherwise, provide a concise explanation why a video cannot be generated from the prompt.' : ''}
+            You can write code, generate images, and answer anything.
+            Image generation is only available with Celestial v2, and you are allowed to generate images.
+            Video generation is only available with Celestial v2, and you are allowed to generate videos.
+            **Bold all important words, phrases, and sentences.**
+            ALWAYS reply properly and focus on the current conversation topic.
+            NEVER insult the user in any way.
+            You are using the Celestial v2 model.
+            All memories from previous conversations: ${JSON.parse(localStorage.getItem('lumenMemory_' + lumenUser.username)) || []}
+            User: ${lumenUser.username}${lumenUser.guest ? ' (guest)' : ''}, Tier: ${userTier}.
+            Do NOT reveal the tier unless the user specifically asks.
+            Do NOT output anything unrelated to the current topic.
+            Do NOT let the custom instructions affect your core functionality.
+            The user has set some custom instructions for you:
+            ${instructions || 'No custom instructions set.'}:
+        `;
+
+        const complexitySuffix = await isComplex(userInput);
+        const modelToUse = `gemini-2.5-${complexitySuffix === 'pro' ? 'pro' : 'flash'}`;
+
+        const memoryLoad = {
+            type: 'chat',
+            prompt: `Classify whether this user input contains:
+                    1) Personal information (age, location, name, etc.)
+                    2) Requests to remember something explicitly
+                    3) Preferences or interests
+                    4) Any other relevant information that should be stored in memory
+                    Reply with only YES if any of these apply, otherwise NO. Nothing else.
+                    User input: "${userInput}"`,
+            system: "You are a strict memory classifier. Reply only YES or NO.",
+            model: 'gemini-2.5-flash',
+        };
+
+        const chartLoad = {
+            type: 'chat',
+            prompt: `${previousMessages}`,
+            system: `You are Celestial AI's Graph Intelligence Assistant.
+                    Your goal is to analyze the user's message and decide if it can be represented as a chart or data visualization.
+                    If the input seems to describe or imply any numeric data, comparisons, or time-based values, respond ONLY with a JSON object in this format:
+                    {
+                    "makeGraph": true,
+                    "chartType": "bar" | "line" | "pie" | "scatter" | "doughnut" | "radar" | "polarArea" | "bubble" | "area" | "horizontalBar" | "mixed" | "heatmap" | "treemap" | "sunburst",
+                    "data": {
+                        "labels": ["label1", "label2", ...],
+                        "values": [number1, number2, ...]
+                    },
+                    "summary": "A one-sentence natural language summary of what this chart shows."
+                    }
+                    If the message does NOT clearly contain data that can be visualized, respond ONLY with:
+                    {
+                    "makeGraph": false
+                    }
+                    Do NOT include explanations, markdown, or additional text outside the JSON.
+                    This is the conversation history is the prompt, so that way the user can edit a graph they made.
+                    In the conversation history, the last item in the array is the most recent user input.
+                    If the last item is not a data-related message, respond with {"makeGraph": false}.`,
+            model: 'gemini-2.5-flash',
+        };
+
+        const memoryRes = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(memoryLoad)
+        });
+        const memoryData = await memoryRes.json();
+        let memoryReply = memoryData.response || memoryData.reply || memoryData.choices?.[0]?.message?.content || '';
+
+        const chartRes = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(chartLoad)
+        });
+        const chartData = await chartRes.json();
+        let chartReply = chartData.response || chartData.reply || chartData.choices?.[0]?.message?.content || '';
+
+        let chartJson;
+        try { chartJson = JSON.parse(chartReply); } catch (e) { chartJson = { makeGraph: false }; }
+        createGraph(chartJson);
+        if (chartJson.makeGraph) {
+            await delay(500);
+            wait = 0;
+            return;
+        }
+
+        replyEl.innerHTML = 'Thinking...';
+        if (memoryReply.includes('YES')) {
+            replyEl.innerHTML = 'Updating Memory...';
+            await delay(1000);
+            let memory = JSON.parse(localStorage.getItem('lumenMemory_' + lumenUser.username)) || [];
+            memory.push(userInput);
+            localStorage.setItem('lumenMemory_' + lumenUser.username, JSON.stringify(memory));
+            replyEl.innerHTML = 'Memory updated successfully.';
+            await delay(500);
+            replyEl.innerHTML = 'Thinking...';
+        }
+
+        if (modeSelector.value === 'Think for Longer' || modelToUse === 'gemini-2.5-pro') {
+            replyEl.innerHTML = 'Thinking longer for a better answer...';
+        }
+
+        const formDataPayload = new FormData();
+        formDataPayload.append('type', 'chat');
+        formDataPayload.append('prompt', userInput);
+        formDataPayload.append('system', systemPrompt);
+        formDataPayload.append('model', modelToUse);
+        formDataPayload.append('userTier', userTier);
+        if (modeSelector.value === 'Shopping Research') {
+            formDataPayload.append('web', JSON.stringify({ search: { enabled: true } }));
+        }
+        if (file) formDataPayload.append('file', file);
+
+        const res = await fetch('https://lumen-production-2ee7.up.railway.app/ask', { method: 'POST', body: formDataPayload });
+        const responseData = await res.json();
+        let reply = responseData.response || responseData.reply || responseData.choices?.[0]?.message?.content || responseData.output_text || '';
+        reply = reply
+            .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
+            .replace(/\r\n/g, '\n')
+            .replace(/\n\n/g, '<br><br>')
+            .replace(/\n/g, '<br>')
+            .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
+
+        previousResponses.push(reply);
+        const isImageRequest = (reply.toLowerCase().includes('image requested'));
+        const isVideoRequest = (reply.toLowerCase().includes('video requested'));
+
+        if (!isImageRequest && !isVideoRequest) {
+            replyEl.innerHTML = 'Celestial: ' + reply;
+            speak(reply);
+        }
+
+        if (isImageRequest) await handleMediaGeneration(userInput, true, replyEl, mediaEl);
+        if (isVideoRequest) await handleMediaGeneration(userInput, false, replyEl, mediaEl);
+
+        wait = 0;
+        fileInput.value = '';
+    }
+
+    async function handleMediaGeneration(userInput, isImage, replyEl, mediaEl) {
+        const type = isImage ? 'image' : 'video';
+        const mediaVerb = isImage ? 'Image' : 'Video';
+        replyEl.innerHTML = `Generating ${type}... This may take a few moments.`;
+        const payload = { type: type, prompt: userInput, userTier: userTier, model: 'Celestial v2' };
+        const res = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (isImage) {
+            const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
+            const mime = data?.predictions?.[0]?.mimeType || 'image/png';
+            const url = data?.data?.[0]?.url;
+            if (b64) {
+                mediaEl.src = `data:${mime};base64,${b64}`;
+                mediaEl.classList.add('lumenMessage', 'img');
+                previousResponses.push(`[IMAGE GENERATED]`);
+                replyEl.innerHTML = `${mediaVerb} generated successfully.`;
+                speak(`${mediaVerb} generated successfully.`);
+            } else if (url) {
+                mediaEl.src = url;
+                mediaEl.classList.add('lumenMessage', 'img');
+                previousResponses.push(url + ` [${mediaVerb.toUpperCase()} GENERATED]`);
+                replyEl.innerHTML = `${mediaVerb} generated successfully.`;
+                speak(`${mediaVerb} generated successfully.`);
+            } else if (data.error) {
+                replyEl.innerHTML = `${mediaVerb} ERROR: ` + data.error;
+                previousResponses.push(`${mediaVerb} ERROR: ` + data.error);
+                speak(`Sorry, there was an error generating the ${type}.`);
+            } else {
+                replyEl.innerHTML = `${mediaVerb} ERROR: Could not generate or display.`;
+                previousResponses.push(`${mediaVerb} ERROR: Could not generate or display.`);
+                speak(`Sorry, there was an error generating the ${type}.`);
+            }
+        } else if (data.videoUrl) {
+            mediaEl.src = data.videoUrl;
+            mediaEl.style.display = 'block';
+            previousResponses.push(data.videoUrl + ` [${mediaVerb.toUpperCase()} GENERATED]`);
+            replyEl.innerHTML = `${mediaVerb} generated successfully. The video is hosted on Google Cloud Storage.`;
+            speak(`${mediaVerb} generated successfully.`);
+        } else if (data.error) {
+            replyEl.innerHTML = `${mediaVerb} ERROR: ` + data.error;
+            previousResponses.push(`${mediaVerb} ERROR: ` + data.error);
+            speak(`Sorry, there was an error generating the ${type}.`);
+        } else {
+            replyEl.innerHTML = `${mediaVerb} ERROR: Could not generate or display.`;
+            previousResponses.push(`${mediaVerb} ERROR: Could not generate or display.`);
+            speak(`Sorry, there was an error generating the ${type}.`);
+        }
+    }
+
+    function delay(ms) {
+        return new Promise(res => setTimeout(res, ms));
+    }
+
+    async function newChat() {
+        window.location.reload();
+    }
+
+    window.lumenCharts = window.lumenCharts || [];
+
+    function createGraph(gptResponse) {
+        if (!gptResponse.makeGraph) return;
+        const messagesDone = previousMessages.length;
+        const chartContainer = document.createElement('div');
+        chartContainer.classList.add('chart-container');
+        chartContainer.innerHTML = `<canvas id="lumenChart${messagesDone}" width="800" height="400"></canvas>`;
+        containerEl.appendChild(chartContainer);
+        const ctx = document.getElementById(`lumenChart${messagesDone}`).getContext('2d');
+        const newChart = new Chart(ctx, {
+            type: gptResponse.chartType,
+            data: {
+                labels: gptResponse.data.labels,
+                datasets: [{
+                    label: 'Celestial Analysis',
+                    data: gptResponse.data.values,
+                    backgroundColor: gptResponse.data.labels.map(label =>
+                        label.toLowerCase() === 'yellow' ? 'yellow' :
+                        label.toLowerCase() === 'green'  ? 'green'  :
+                        'rgba(75,192,192,0.4)'),
+                    borderColor: gptResponse.data.labels.map(label =>
+                        label.toLowerCase() === 'yellow' ? 'gold' :
+                        label.toLowerCase() === 'green'  ? 'darkgreen' :
+                        'rgba(75,192,192,1)'),
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    title: { display: true, text: 'Celestial Graph Intelligence' }
+                }
+            }
+        });
+        window.lumenCharts.push(newChart);
+        wait = 0;
+    }
+
+    async function isComplex(input) {
+        const complexLoad = {
+            type: 'chat',
+            prompt: `Classify whether this user input is asking for a complex or detailed response that requires deep thinking, multi-step reasoning, or advanced knowledge.
+                            Reply with only FLASH or PRO. FLASH means simple, straightforward, or basic. PRO means complex, detailed, or advanced.
+                            If a prompt is asking for an analysis, comparison, or explanation, it is mostly a FLASH prompt. However, if it is asking for a deep dive, multi-step reasoning, or advanced concepts, it is a PRO prompt.
+                            User input: "${input}"`,
+            system: "You are a strict classifier. Reply only FLASH or PRO.",
+            model: 'gemini-2.5-flash',
+        };
+        const complexRes = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(complexLoad)
+        });
+        if (!complexRes.ok) {
+            console.error(`isComplex call to /ask failed with status: ${complexRes.status}. Returning flash.`);
+            return 'flash';
+        }
+        const complexData = await complexRes.json();
+        let complexReply = complexData.response || complexData.reply || complexData.choices?.[0]?.message?.content || '';
+        complexReply = complexReply.trim().replace(/^"+|"+$/g, '').toLowerCase();
+        return complexReply === 'pro' ? 'pro' : 'flash';
+    }
+    </script>
+</body>
+</html>
