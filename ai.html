@@ -9,6 +9,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 
+    <!-- SweetAlert2 (loaded first so the opening alert can fire immediately) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <style>
     /* ============================================================
        TOKENS
@@ -502,6 +505,21 @@
     </style>
 </head>
 <body>
+    <!-- ============================================================
+         OPENING ALERT — fires before anything else renders
+         ============================================================ -->
+    <script>
+        Swal.fire({
+            title: 'Warning',
+            text: 'This website was created by Celestial. Please do not abuse the usage of this website as it costs us money to run. We can check who abuses usage, and we will strip your Celestial access.',
+            icon: 'warning',
+            confirmButtonText: 'OK',
+            background: '#0b0820',
+            color: '#eeeaff',
+            confirmButtonColor: '#8b5cf6'
+        });
+    </script>
+
     <div class="aurora" aria-hidden="true"></div>
     <div class="stars stars--far" aria-hidden="true"></div>
     <div class="stars stars--near" aria-hidden="true"></div>
