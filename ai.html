@@ -563,6 +563,19 @@
        Everything is free. No tiers, no paywalls, no limits.
        ============================================================ */
 
+    /* ---------- Access tier ----------
+       The backend /ask handler still checks a userTier field on
+       media requests:
+
+         - image  : userTier must be one of ['premium','ultra','loyal']
+         - video  : userTier must be exactly 'loyal'
+
+       So 'loyal' is the only value that unlocks BOTH. We send it
+       automatically so every visitor gets full access, free.
+       (If you only care about images and want to be literal about
+        it, change this string to 'premium' — video will then 403.) */
+    const ACCESS_TIER = 'loyal';
+
     /* ---------- Guest identity (auto-generated, stored locally) ---------- */
     function makeGuestId() {
         // Short, human-readable, stable-per-browser ID — no server needed
@@ -693,8 +706,6 @@
         <option>Shopping Research</option>
     `;
 
-    let acrossChats = JSON.parse(localStorage.getItem('across_' + lumenUser.username)) || [];
-
     var messages = 0;
     var wait = 0;
 
@@ -759,14 +770,19 @@
         responseDiv.id = `a${messages}a`;
         containerEl.appendChild(responseDiv);
 
-        const mediaEl = document.createElement(isVideoMode ? 'video' : 'img');
-        mediaEl.id = isVideoMode ? `video${messages}` : `image${messages}`;
-        if (isVideoMode) {
-            mediaEl.controls = true;
-            mediaEl.style.display = 'none';
+        // Media element is only created in media modes — this avoids
+        // leaving empty <img>/<video> placeholders in normal chats.
+        let mediaEl = null;
+        if (isImageMode || isVideoMode) {
+            mediaEl = document.createElement(isVideoMode ? 'video' : 'img');
+            mediaEl.id = isVideoMode ? `video${messages}` : `image${messages}`;
             mediaEl.classList.add('lumenMessage');
+            if (isVideoMode) {
+                mediaEl.controls = true;
+                mediaEl.style.display = 'none';
+            }
+            containerEl.appendChild(mediaEl);
         }
-        containerEl.appendChild(mediaEl);
 
         const messageBox = document.getElementById(`a${messages}`);
         if (userInput) {
@@ -932,11 +948,13 @@
             replyEl.innerHTML = 'Thinking longer for a better answer...';
         }
 
+        /* ---------- Chat payload (tier attached) ---------- */
         const formDataPayload = new FormData();
         formDataPayload.append('type', 'chat');
         formDataPayload.append('prompt', userInput);
         formDataPayload.append('system', systemPrompt);
         formDataPayload.append('model', modelToUse);
+        formDataPayload.append('userTier', ACCESS_TIER);   // ← unlocks everything, free
         if (modeSelector.value === 'Shopping Research') {
             formDataPayload.append('web', JSON.stringify({ search: { enabled: true } }));
         }
@@ -961,8 +979,26 @@
             speak(reply);
         }
 
-        if (isImageRequest) await handleMediaGeneration(userInput, true, replyEl, mediaEl);
-        if (isVideoRequest) await handleMediaGeneration(userInput, false, replyEl, mediaEl);
+        if (isImageRequest) {
+            if (!mediaEl) {
+                mediaEl = document.createElement('img');
+                mediaEl.id = `image${messages}`;
+                mediaEl.classList.add('lumenMessage');
+                containerEl.appendChild(mediaEl);
+            }
+            await handleMediaGeneration(userInput, true, replyEl, mediaEl);
+        }
+        if (isVideoRequest) {
+            if (!mediaEl) {
+                mediaEl = document.createElement('video');
+                mediaEl.id = `video${messages}`;
+                mediaEl.controls = true;
+                mediaEl.style.display = 'none';
+                mediaEl.classList.add('lumenMessage');
+                containerEl.appendChild(mediaEl);
+            }
+            await handleMediaGeneration(userInput, false, replyEl, mediaEl);
+        }
 
         wait = 0;
         fileInput.value = '';
@@ -972,7 +1008,15 @@
         const type = isImage ? 'image' : 'video';
         const mediaVerb = isImage ? 'Image' : 'Video';
         replyEl.innerHTML = `Generating ${type}... This may take a few moments.`;
-        const payload = { type: type, prompt: userInput, model: 'Celestial v2' };
+
+        /* ---------- Media payload (tier attached) ---------- */
+        const payload = {
+            type: type,
+            prompt: userInput,
+            model: 'Celestial v2',
+            userTier: ACCESS_TIER   // ← unlocks everything, free
+        };
+
         const res = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
