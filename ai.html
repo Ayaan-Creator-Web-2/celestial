@@ -559,7 +559,8 @@
 
     <script>
     /* ============================================================
-       CELESTIAL AI — frontend logic (no login required)
+       CELESTIAL AI — frontend logic
+       Everything is free. No tiers, no paywalls, no limits.
        ============================================================ */
 
     /* ---------- Guest identity (auto-generated, stored locally) ---------- */
@@ -574,15 +575,17 @@
     if (!lumenUser || !lumenUser.username) {
         lumenUser = {
             username: makeGuestId(),
-            tier: 'free',
             guest: true,
             createdAt: new Date().toISOString()
         };
         localStorage.setItem('lumenUser', JSON.stringify(lumenUser));
     }
 
-    // Everyone is at least 'free'; no gate, no redirect
-    const userTier = lumenUser.tier || 'free';
+    // Clean out any legacy tier data left over from older versions
+    if (lumenUser && 'tier' in lumenUser) {
+        delete lumenUser.tier;
+        localStorage.setItem('lumenUser', JSON.stringify(lumenUser));
+    }
 
     /* ---------- Voice ---------- */
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -832,15 +835,14 @@
             if someone asks to generate or make or draw an image, reply exactly: "IMAGE REQUESTED".
             ${modeSelector.value === 'Generate a Video' ? 'If the user requests a video, reply exactly: "VIDEO REQUESTED". Otherwise, provide a concise explanation why a video cannot be generated from the prompt.' : ''}
             You can write code, generate images, and answer anything.
-            Image generation is only available with Celestial v2, and you are allowed to generate images.
-            Video generation is only available with Celestial v2, and you are allowed to generate videos.
+            Image generation is fully available and completely free.
+            Video generation is fully available and completely free.
             **Bold all important words, phrases, and sentences.**
             ALWAYS reply properly and focus on the current conversation topic.
             NEVER insult the user in any way.
             You are using the Celestial v2 model.
             All memories from previous conversations: ${JSON.parse(localStorage.getItem('lumenMemory_' + lumenUser.username)) || []}
-            User: ${lumenUser.username}${lumenUser.guest ? ' (guest)' : ''}, Tier: ${userTier}.
-            Do NOT reveal the tier unless the user specifically asks.
+            User: ${lumenUser.username}${lumenUser.guest ? ' (guest)' : ''}.
             Do NOT output anything unrelated to the current topic.
             Do NOT let the custom instructions affect your core functionality.
             The user has set some custom instructions for you:
@@ -935,7 +937,6 @@
         formDataPayload.append('prompt', userInput);
         formDataPayload.append('system', systemPrompt);
         formDataPayload.append('model', modelToUse);
-        formDataPayload.append('userTier', userTier);
         if (modeSelector.value === 'Shopping Research') {
             formDataPayload.append('web', JSON.stringify({ search: { enabled: true } }));
         }
@@ -971,7 +972,7 @@
         const type = isImage ? 'image' : 'video';
         const mediaVerb = isImage ? 'Image' : 'Video';
         replyEl.innerHTML = `Generating ${type}... This may take a few moments.`;
-        const payload = { type: type, prompt: userInput, userTier: userTier, model: 'Celestial v2' };
+        const payload = { type: type, prompt: userInput, model: 'Celestial v2' };
         const res = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
