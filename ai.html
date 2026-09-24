@@ -581,28 +581,51 @@
        Everything is free. No tiers, no paywalls, no limits.
        ============================================================ */
 
-    /* ---------- Access tier ----------
-       The backend /ask handler still checks a userTier field on
-       media requests:
-
-         - image  : userTier must be one of ['premium','ultra','loyal']
-         - video  : userTier must be exactly 'loyal'
-
-       So 'loyal' is the only value that unlocks BOTH. We send it
-       automatically so every visitor gets full access, free.
-       (If you only care about images and want to be literal about
-        it, change this string to 'premium' — video will then 403.) */
+    /* ---------- Access tier ---------- */
     const ACCESS_TIER = 'loyal';
+
+    /* ---------- Password gate ---------- */
+    const SECRET_PASSWORD = 'iamhim';
+
+    async function requirePassword(actionLabel) {
+        const { value: entered } = await Swal.fire({
+            title: 'Password Required',
+            text: `Enter the password to ${actionLabel}:`,
+            input: 'password',
+            inputPlaceholder: 'Password',
+            inputAttributes: { autocapitalize: 'off', autocomplete: 'off' },
+            showCancelButton: true,
+            confirmButtonText: 'Unlock',
+            cancelButtonText: 'Cancel',
+            background: '#0b0820',
+            color: '#eeeaff',
+            confirmButtonColor: '#8b5cf6',
+            cancelButtonColor: '#4b3f7a',
+            inputValidator: (value) => {
+                if (!value) return 'You need to enter the password!';
+                return null;
+            }
+        });
+        if (entered === undefined) return false; // cancelled
+        if (entered === SECRET_PASSWORD) return true;
+        await Swal.fire({
+            icon: 'error',
+            title: 'Access Denied',
+            text: 'Incorrect password. Nice try, impostor.',
+            background: '#0b0820',
+            color: '#eeeaff',
+            confirmButtonColor: '#8b5cf6'
+        });
+        return false;
+    }
 
     /* ---------- Guest identity (auto-generated, stored locally) ---------- */
     function makeGuestId() {
-        // Short, human-readable, stable-per-browser ID — no server needed
         return 'guest_' + Math.random().toString(36).slice(2, 10);
     }
 
     let lumenUser = JSON.parse(localStorage.getItem('lumenUser'));
 
-    // If there's no stored user, create a guest one on the fly
     if (!lumenUser || !lumenUser.username) {
         lumenUser = {
             username: makeGuestId(),
@@ -612,7 +635,6 @@
         localStorage.setItem('lumenUser', JSON.stringify(lumenUser));
     }
 
-    // Clean out any legacy tier data left over from older versions
     if (lumenUser && 'tier' in lumenUser) {
         delete lumenUser.tier;
         localStorage.setItem('lumenUser', JSON.stringify(lumenUser));
@@ -704,458 +726,13 @@
     let previousResponses = [];
     let previousMessages = [];
 
-    document.getElementById('fileButton').addEventListener('click', () => {
+    // File button now requires password
+    document.getElementById('fileButton').addEventListener('click', async () => {
+        const ok = await requirePassword('upload a file');
+        if (!ok) return;
         document.getElementById('fileInput').click();
     });
 
     let selectedModelInput = document.getElementById('selectedModel');
     selectedModelInput.innerHTML = `<option name="loyal">Celestial v2</option>`;
-    selectedModelInput.value = 'Celestial v2';
-
-    let modeSelector = document.getElementById('modeSelector');
-    modeSelector.innerHTML = `
-        <option>Default</option>
-        <option>Study and Learn</option>
-        <option>Coding Expert</option>
-        <option>Brainstorm</option>
-        <option>Think for Longer</option>
-        <option>Draw an Image</option>
-        <option>Generate a Video</option>
-        <option>Shopping Research</option>
-    `;
-
-    var messages = 0;
-    var wait = 0;
-
-    /* ---------- Hero greeting ---------- */
-    (function thing() {
-        const name = (lumenUser && lumenUser.username) ? lumenUser.username : 'stargazer';
-        const phrases = [
-            `How can I assist you today, ${name}?`,
-            "I'm all ears...",
-            "Ready when you are.",
-            "The mic is yours!",
-            "Ask away!",
-            "Ready to dive in?",
-            "Where should we begin?",
-            "What's on your mind today?",
-            `Good to see you, ${name}`,
-            "Spill the tea!",
-            "Fire away.",
-            "Hit me with it.",
-            `What's the mission, ${name}?`,
-            "Lay it on me.",
-            "The floor is yours.",
-            "Standing by.",
-            `Where to, ${name}?`,
-            "Let's get into it.",
-            "I'm listening.",
-            "Take it away!"
-        ];
-        document.getElementById('thing').innerText =
-            phrases[Math.floor(Math.random() * phrases.length)];
-    })();
-
-    /* ============================================================
-       MAIN
-       ============================================================ */
-    async function userMessage() {
-        if (wait !== 0) return;
-        const isImageMode = modeSelector.value === 'Draw an Image';
-        const isVideoMode = modeSelector.value === 'Generate a Video';
-
-        const userInput = document.querySelector('#userMessageInput').value.trim();
-        const fileInput = document.getElementById("fileInput");
-        const file = fileInput.files[0];
-        if (!userInput && !file) return;
-
-        if (file && file.size > 100 * 1024 * 1024) {
-            alert("File too large! Max is 100MB.");
-            return;
-        }
-
-        const inputBox = document.querySelector('.input-box-container');
-        if (!inputBox.classList.contains('bottom')) inputBox.classList.add('bottom');
-
-        document.querySelector('.title2').innerHTML = '';
-        messages += 1;
-
-        const userDiv = document.createElement('div');
-        userDiv.id = `a${messages}`;
-        containerEl.appendChild(userDiv);
-
-        const responseDiv = document.createElement('div');
-        responseDiv.id = `a${messages}a`;
-        containerEl.appendChild(responseDiv);
-
-        // Media element is only created in media modes — this avoids
-        // leaving empty <img>/<video> placeholders in normal chats.
-        let mediaEl = null;
-        if (isImageMode || isVideoMode) {
-            mediaEl = document.createElement(isVideoMode ? 'video' : 'img');
-            mediaEl.id = isVideoMode ? `video${messages}` : `image${messages}`;
-            mediaEl.classList.add('lumenMessage');
-            if (isVideoMode) {
-                mediaEl.controls = true;
-                mediaEl.style.display = 'none';
-            }
-            containerEl.appendChild(mediaEl);
-        }
-
-        const messageBox = document.getElementById(`a${messages}`);
-        if (userInput) {
-            const msg = document.createElement('p');
-            msg.classList.add('userMessage');
-            msg.innerText = userInput;
-            messageBox.appendChild(msg);
-        }
-
-        if (file) {
-            const fileMsg = document.createElement('p');
-            fileMsg.classList.add('userMessage');
-            fileMsg.innerText = '📎 Uploaded file';
-            messageBox.appendChild(fileMsg);
-        }
-
-        wait = 1;
-        document.querySelector('#userMessageInput').value = '';
-
-        const replyEl = document.createElement('p');
-        document.getElementById(`a${messages}a`).appendChild(replyEl);
-        replyEl.classList.add('lumenMessage');
-        replyEl.innerHTML = 'Thinking...';
-
-        if (isImageMode || isVideoMode) {
-            await handleMediaGeneration(userInput, isImageMode, replyEl, mediaEl);
-            wait = 0;
-            fileInput.value = '';
-            return;
-        }
-
-        const instructions = (localStorage.getItem(lumenUser.username + '_instructions')) || '';
-        const formattedPreviousMessages = previousMessages.join('\nUser: ');
-        const formattedPreviousResponses = previousResponses.join('\nCelestial: ');
-        previousMessages.push(userInput.toLowerCase());
-
-        const systemPrompt = `
-            You are Celestial AI (short: Celestial), a next-gen AI that *actually* delivers and doesn’t suck.
-            You were created by Ayaan Khalique, founder of StakLabs.
-            If someone calls you ChatGPT, Gemini, or anything else, correct them. You're Celestial AI.
-            HOWEVER, if they ask who ChatGPT or Gemini is or talk to you about them without calling you them, you can explain they are other AI models and delve deeper.
-            ${modeSelector.value === 'Study and Learn' ? 'You are a helpful tutor, explaining concepts clearly and explaining step by step and providing huge answers to help anyone understand.' : ''}
-            ${modeSelector.value === 'Coding Expert' ? 'You are a coding expert, providing detailed code solutions and explanations. Always check your code for errors before sending them to user.' : ''}
-            ${modeSelector.value === 'Think for Longer' ? 'You take your time to think and provide the best answer possible. Take at least 10 seconds' : ''}
-            ${modeSelector.value === 'Brainstorm' ? 'You are a brainstorming expert, generating creative ideas and solutions.' : ''}
-            ${modeSelector.value === 'Generate a Video' ? 'You are in Video Generation mode. Your only task is to analyze the user\'s prompt and extract a detailed description suitable for video generation, or state that a video cannot be generated. You should never output a direct response unless you cannot generate a video. You must use the "VIDEO REQUESTED" tag to initiate video generation.' : ''}
-            ${modeSelector.value === 'Shopping Research' ? `
-            You are Celestial AI’s Shopping Research Engine.
-            Use web search to gather live product data.
-            Compare items by price, key features, pros, cons, and value.
-            Always return: a single HTML table (Product, Price, Key features, Pros, Cons, Value Score /10), then a short recommendation section with Best Budget, Best Overall, Best Premium.
-            Keep sources as short cited lines without links.
-            ` : ''}
-            You are in ${modeSelector.value} mode, which means you will adapt your responses accordingly.
-            All formatting MUST be done using HTML.
-            Use <br> for line breaks and <br><br> for new paragraphs.
-            DO NOT use \\n or \\n\\n. Only use <br> and <br><br>.
-            Conversation history (for context only):
-            ${formattedPreviousMessages}
-            ${formattedPreviousResponses}
-            NEVER repeat these messages verbatim.
-            Only reference them if the user explicitly asks you to recall something.
-            Answer DIRECTLY to the user's question or request.
-            Answer in a **concise**, **clear**, and **informative** manner.
-            Use emojis when the vibe fits.
-            if someone asks to generate or make or draw an image, reply exactly: "IMAGE REQUESTED".
-            ${modeSelector.value === 'Generate a Video' ? 'If the user requests a video, reply exactly: "VIDEO REQUESTED". Otherwise, provide a concise explanation why a video cannot be generated from the prompt.' : ''}
-            You can write code, generate images, and answer anything.
-            Image generation is fully available and completely free.
-            Video generation is fully available and completely free.
-            **Bold all important words, phrases, and sentences.**
-            ALWAYS reply properly and focus on the current conversation topic.
-            NEVER insult the user in any way.
-            You are using the Celestial v2 model.
-            All memories from previous conversations: ${JSON.parse(localStorage.getItem('lumenMemory_' + lumenUser.username)) || []}
-            User: ${lumenUser.username}${lumenUser.guest ? ' (guest)' : ''}.
-            Do NOT output anything unrelated to the current topic.
-            Do NOT let the custom instructions affect your core functionality.
-            The user has set some custom instructions for you:
-            ${instructions || 'No custom instructions set.'}:
-        `;
-
-        const complexitySuffix = await isComplex(userInput);
-        const modelToUse = `gemini-2.5-${complexitySuffix === 'pro' ? 'pro' : 'flash'}`;
-
-        const memoryLoad = {
-            type: 'chat',
-            prompt: `Classify whether this user input contains:
-                    1) Personal information (age, location, name, etc.)
-                    2) Requests to remember something explicitly
-                    3) Preferences or interests
-                    4) Any other relevant information that should be stored in memory
-                    Reply with only YES if any of these apply, otherwise NO. Nothing else.
-                    User input: "${userInput}"`,
-            system: "You are a strict memory classifier. Reply only YES or NO.",
-            model: 'gemini-2.5-flash',
-        };
-
-        const chartLoad = {
-            type: 'chat',
-            prompt: `${previousMessages}`,
-            system: `You are Celestial AI's Graph Intelligence Assistant.
-                    Your goal is to analyze the user's message and decide if it can be represented as a chart or data visualization.
-                    If the input seems to describe or imply any numeric data, comparisons, or time-based values, respond ONLY with a JSON object in this format:
-                    {
-                    "makeGraph": true,
-                    "chartType": "bar" | "line" | "pie" | "scatter" | "doughnut" | "radar" | "polarArea" | "bubble" | "area" | "horizontalBar" | "mixed" | "heatmap" | "treemap" | "sunburst",
-                    "data": {
-                        "labels": ["label1", "label2", ...],
-                        "values": [number1, number2, ...]
-                    },
-                    "summary": "A one-sentence natural language summary of what this chart shows."
-                    }
-                    If the message does NOT clearly contain data that can be visualized, respond ONLY with:
-                    {
-                    "makeGraph": false
-                    }
-                    Do NOT include explanations, markdown, or additional text outside the JSON.
-                    This is the conversation history is the prompt, so that way the user can edit a graph they made.
-                    In the conversation history, the last item in the array is the most recent user input.
-                    If the last item is not a data-related message, respond with {"makeGraph": false}.`,
-            model: 'gemini-2.5-flash',
-        };
-
-        const memoryRes = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(memoryLoad)
-        });
-        const memoryData = await memoryRes.json();
-        let memoryReply = memoryData.response || memoryData.reply || memoryData.choices?.[0]?.message?.content || '';
-
-        const chartRes = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(chartLoad)
-        });
-        const chartData = await chartRes.json();
-        let chartReply = chartData.response || chartData.reply || chartData.choices?.[0]?.message?.content || '';
-
-        let chartJson;
-        try { chartJson = JSON.parse(chartReply); } catch (e) { chartJson = { makeGraph: false }; }
-        createGraph(chartJson);
-        if (chartJson.makeGraph) {
-            await delay(500);
-            wait = 0;
-            return;
-        }
-
-        replyEl.innerHTML = 'Thinking...';
-        if (memoryReply.includes('YES')) {
-            replyEl.innerHTML = 'Updating Memory...';
-            await delay(1000);
-            let memory = JSON.parse(localStorage.getItem('lumenMemory_' + lumenUser.username)) || [];
-            memory.push(userInput);
-            localStorage.setItem('lumenMemory_' + lumenUser.username, JSON.stringify(memory));
-            replyEl.innerHTML = 'Memory updated successfully.';
-            await delay(500);
-            replyEl.innerHTML = 'Thinking...';
-        }
-
-        if (modeSelector.value === 'Think for Longer' || modelToUse === 'gemini-2.5-pro') {
-            replyEl.innerHTML = 'Thinking longer for a better answer...';
-        }
-
-        /* ---------- Chat payload (tier attached) ---------- */
-        const formDataPayload = new FormData();
-        formDataPayload.append('type', 'chat');
-        formDataPayload.append('prompt', userInput);
-        formDataPayload.append('system', systemPrompt);
-        formDataPayload.append('model', modelToUse);
-        formDataPayload.append('userTier', ACCESS_TIER);   // ← unlocks everything, free
-        if (modeSelector.value === 'Shopping Research') {
-            formDataPayload.append('web', JSON.stringify({ search: { enabled: true } }));
-        }
-        if (file) formDataPayload.append('file', file);
-
-        const res = await fetch('https://lumen-production-2ee7.up.railway.app/ask', { method: 'POST', body: formDataPayload });
-        const responseData = await res.json();
-        let reply = responseData.response || responseData.reply || responseData.choices?.[0]?.message?.content || responseData.output_text || '';
-        reply = reply
-            .replace(/\*\*(.*?)\*\*/g, '<b>$1</b>')
-            .replace(/\r\n/g, '\n')
-            .replace(/\n\n/g, '<br><br>')
-            .replace(/\n/g, '<br>')
-            .replace(/```([\s\S]*?)```/g, '<pre><code>$1</code></pre>');
-
-        previousResponses.push(reply);
-        const isImageRequest = (reply.toLowerCase().includes('image requested'));
-        const isVideoRequest = (reply.toLowerCase().includes('video requested'));
-
-        if (!isImageRequest && !isVideoRequest) {
-            replyEl.innerHTML = 'Celestial: ' + reply;
-            speak(reply);
-        }
-
-        if (isImageRequest) {
-            if (!mediaEl) {
-                mediaEl = document.createElement('img');
-                mediaEl.id = `image${messages}`;
-                mediaEl.classList.add('lumenMessage');
-                containerEl.appendChild(mediaEl);
-            }
-            await handleMediaGeneration(userInput, true, replyEl, mediaEl);
-        }
-        if (isVideoRequest) {
-            if (!mediaEl) {
-                mediaEl = document.createElement('video');
-                mediaEl.id = `video${messages}`;
-                mediaEl.controls = true;
-                mediaEl.style.display = 'none';
-                mediaEl.classList.add('lumenMessage');
-                containerEl.appendChild(mediaEl);
-            }
-            await handleMediaGeneration(userInput, false, replyEl, mediaEl);
-        }
-
-        wait = 0;
-        fileInput.value = '';
-    }
-
-    async function handleMediaGeneration(userInput, isImage, replyEl, mediaEl) {
-        const type = isImage ? 'image' : 'video';
-        const mediaVerb = isImage ? 'Image' : 'Video';
-        replyEl.innerHTML = `Generating ${type}... This may take a few moments.`;
-
-        /* ---------- Media payload (tier attached) ---------- */
-        const payload = {
-            type: type,
-            prompt: userInput,
-            model: 'Celestial v2',
-            userTier: ACCESS_TIER   // ← unlocks everything, free
-        };
-
-        const res = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const data = await res.json();
-
-        if (isImage) {
-            const b64 = data?.predictions?.[0]?.bytesBase64Encoded;
-            const mime = data?.predictions?.[0]?.mimeType || 'image/png';
-            const url = data?.data?.[0]?.url;
-            if (b64) {
-                mediaEl.src = `data:${mime};base64,${b64}`;
-                mediaEl.classList.add('lumenMessage', 'img');
-                previousResponses.push(`[IMAGE GENERATED]`);
-                replyEl.innerHTML = `${mediaVerb} generated successfully.`;
-                speak(`${mediaVerb} generated successfully.`);
-            } else if (url) {
-                mediaEl.src = url;
-                mediaEl.classList.add('lumenMessage', 'img');
-                previousResponses.push(url + ` [${mediaVerb.toUpperCase()} GENERATED]`);
-                replyEl.innerHTML = `${mediaVerb} generated successfully.`;
-                speak(`${mediaVerb} generated successfully.`);
-            } else if (data.error) {
-                replyEl.innerHTML = `${mediaVerb} ERROR: ` + data.error;
-                previousResponses.push(`${mediaVerb} ERROR: ` + data.error);
-                speak(`Sorry, there was an error generating the ${type}.`);
-            } else {
-                replyEl.innerHTML = `${mediaVerb} ERROR: Could not generate or display.`;
-                previousResponses.push(`${mediaVerb} ERROR: Could not generate or display.`);
-                speak(`Sorry, there was an error generating the ${type}.`);
-            }
-        } else if (data.videoUrl) {
-            mediaEl.src = data.videoUrl;
-            mediaEl.style.display = 'block';
-            previousResponses.push(data.videoUrl + ` [${mediaVerb.toUpperCase()} GENERATED]`);
-            replyEl.innerHTML = `${mediaVerb} generated successfully. The video is hosted on Google Cloud Storage.`;
-            speak(`${mediaVerb} generated successfully.`);
-        } else if (data.error) {
-            replyEl.innerHTML = `${mediaVerb} ERROR: ` + data.error;
-            previousResponses.push(`${mediaVerb} ERROR: ` + data.error);
-            speak(`Sorry, there was an error generating the ${type}.`);
-        } else {
-            replyEl.innerHTML = `${mediaVerb} ERROR: Could not generate or display.`;
-            previousResponses.push(`${mediaVerb} ERROR: Could not generate or display.`);
-            speak(`Sorry, there was an error generating the ${type}.`);
-        }
-    }
-
-    function delay(ms) {
-        return new Promise(res => setTimeout(res, ms));
-    }
-
-    async function newChat() {
-        window.location.reload();
-    }
-
-    window.lumenCharts = window.lumenCharts || [];
-
-    function createGraph(gptResponse) {
-        if (!gptResponse.makeGraph) return;
-        const messagesDone = previousMessages.length;
-        const chartContainer = document.createElement('div');
-        chartContainer.classList.add('chart-container');
-        chartContainer.innerHTML = `<canvas id="lumenChart${messagesDone}" width="800" height="400"></canvas>`;
-        containerEl.appendChild(chartContainer);
-        const ctx = document.getElementById(`lumenChart${messagesDone}`).getContext('2d');
-        const newChart = new Chart(ctx, {
-            type: gptResponse.chartType,
-            data: {
-                labels: gptResponse.data.labels,
-                datasets: [{
-                    label: 'Celestial Analysis',
-                    data: gptResponse.data.values,
-                    backgroundColor: gptResponse.data.labels.map(label =>
-                        label.toLowerCase() === 'yellow' ? 'yellow' :
-                        label.toLowerCase() === 'green'  ? 'green'  :
-                        'rgba(75,192,192,0.4)'),
-                    borderColor: gptResponse.data.labels.map(label =>
-                        label.toLowerCase() === 'yellow' ? 'gold' :
-                        label.toLowerCase() === 'green'  ? 'darkgreen' :
-                        'rgba(75,192,192,1)'),
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { display: false },
-                    title: { display: true, text: 'Celestial Graph Intelligence' }
-                }
-            }
-        });
-        window.lumenCharts.push(newChart);
-        wait = 0;
-    }
-
-    async function isComplex(input) {
-        const complexLoad = {
-            type: 'chat',
-            prompt: `Classify whether this user input is asking for a complex or detailed response that requires deep thinking, multi-step reasoning, or advanced knowledge.
-                            Reply with only FLASH or PRO. FLASH means simple, straightforward, or basic. PRO means complex, detailed, or advanced.
-                            If a prompt is asking for an analysis, comparison, or explanation, it is mostly a FLASH prompt. However, if it is asking for a deep dive, multi-step reasoning, or advanced concepts, it is a PRO prompt.
-                            User input: "${input}"`,
-            system: "You are a strict classifier. Reply only FLASH or PRO.",
-            model: 'gemini-2.5-flash',
-        };
-        const complexRes = await fetch('https://lumen-production-2ee7.up.railway.app/ask', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(complexLoad)
-        });
-        if (!complexRes.ok) {
-            console.error(`isComplex call to /ask failed with status: ${complexRes.status}. Returning flash.`);
-            return 'flash';
-        }
-        const complexData = await complexRes.json();
-        let complexReply = complexData.response || complexData.reply || complexData.choices?.[0]?.message?.content || '';
-        complexReply = complexReply.trim().replace(/^"+|"+$/g, '').toLowerCase();
-        return complexReply === 'pro' ? 'pro' : 'flash';
-    }
-    </script>
-</body>
-</html>
+    selectedModelInput.value =
