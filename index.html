@@ -347,6 +347,8 @@ button {
     opacity: 0;
 }
 
+/* MAIN BUTTON */
+
 .enter-button {
     display: inline-flex;
     align-items: center;
@@ -398,6 +400,39 @@ button {
     transform: translateX(5px);
 }
 
+/* NOT WORKING LINK — BELOW MAIN BUTTON */
+
+.not-working {
+    display: block;
+    width: fit-content;
+    margin: 20px auto 0;
+    position: relative;
+    z-index: 3;
+    color: #8995b5;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-decoration: none;
+    opacity: 0;
+    transition:
+        color .25s ease,
+        text-shadow .25s ease,
+        transform .25s ease;
+}
+
+#introScreen.play .not-working {
+    animation: fadeUp .7s ease 1.2s forwards;
+}
+
+.not-working:hover {
+    color: #ff5270;
+    text-shadow: 0 0 12px #ff254d66;
+    transform: translateY(-2px);
+    text-decoration: underline;
+}
+
+/* INTRO FOOTER */
+
 .intro-bottom {
     position: absolute;
     bottom: 26px;
@@ -410,29 +445,6 @@ button {
     font: 9px monospace;
     letter-spacing: 1px;
     opacity: 0;
-}
-
-/* NOT WORKING LINK */
-
-.not-working {
-    position: absolute;
-    bottom: 55px;
-    right: 28px;
-    z-index: 3;
-    color: #68758b;
-    font-size: 11px;
-    text-decoration: none;
-    opacity: 0;
-    transition: color .2s ease;
-}
-
-#introScreen.play .not-working {
-    animation: fadeUp .7s ease 1.1s forwards;
-}
-
-.not-working:hover {
-    color: #ff5270;
-    text-decoration: underline;
 }
 
 /* DECORATIVE EDGE LINES */
@@ -551,8 +563,8 @@ button {
     }
 
     .not-working {
-        right: 15px;
-        bottom: 52px;
+        font-size: 14px;
+        margin-top: 18px;
     }
 
     .edge.left {
@@ -611,7 +623,6 @@ button {
             </div>
 
         </div>
-
     </div>
 
     <div class="loading-footer">
@@ -650,16 +661,16 @@ button {
             <span>↗</span>
         </button>
 
-    </div>
+        <a
+            class="not-working"
+            href="https://forms.gle/iQWQQA77qtMUwnrWA"
+            target="_blank"
+            rel="noopener noreferrer"
+        >
+            Not Working?
+        </a>
 
-    <a
-        class="not-working"
-        href="https://forms.gle/iQWQQA77qtMUwnrWA"
-        target="_blank"
-        rel="noopener noreferrer"
-    >
-        Not Working?
-    </a>
+    </div>
 
     <div class="intro-bottom">
         <span>CELESTIAL V2.0</span>
