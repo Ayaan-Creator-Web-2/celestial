@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -15,15 +16,17 @@
 :root {
     --blue: #168bff;
     --red: #ff254d;
-    --white: #f5f7ff;
+    --purple: #7045ff;
+    --background: #030408;
 }
 
-html, body {
+html,
+body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #030408;
-    color: var(--white);
+    background: var(--background);
+    color: #e4e8f5;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -34,15 +37,17 @@ button {
 .screen {
     position: fixed;
     inset: 0;
-    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     background:
-        radial-gradient(ellipse at 50% 60%,
+        radial-gradient(
+            ellipse at 50% 60%,
             #101827 0%,
             #080b12 38%,
-            #030408 78%);
+            #030408 78%
+        );
     transition: opacity .7s ease, transform .7s ease;
 }
 
@@ -79,31 +84,59 @@ button {
 .streak.blue {
     top: 35%;
     background: linear-gradient(
-        90deg, transparent, var(--blue), #d7edff, transparent
+        90deg,
+        transparent,
+        #168bff,
+        #4169ff,
+        transparent
     );
-    box-shadow: 0 0 20px var(--blue);
+    box-shadow: 0 0 20px #168bff;
     animation: streakBlue 1.1s ease-out .3s forwards;
 }
 
 .streak.red {
     top: 66%;
     background: linear-gradient(
-        90deg, transparent, var(--red), #ffd1da, transparent
+        90deg,
+        transparent,
+        #ff254d,
+        #ff416c,
+        transparent
     );
-    box-shadow: 0 0 20px var(--red);
+    box-shadow: 0 0 20px #ff254d;
     animation: streakRed 1.1s ease-out .7s forwards;
 }
 
 @keyframes streakBlue {
-    0% { left: -120%; opacity: 0; }
-    15% { opacity: 1; }
-    100% { left: 120%; opacity: 0; }
+    0% {
+        left: -120%;
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        left: 120%;
+        opacity: 0;
+    }
 }
 
 @keyframes streakRed {
-    0% { left: -120%; opacity: 0; }
-    15% { opacity: 1; }
-    100% { left: 120%; opacity: 0; }
+    0% {
+        left: -120%;
+        opacity: 0;
+    }
+
+    15% {
+        opacity: 1;
+    }
+
+    100% {
+        left: 120%;
+        opacity: 0;
+    }
 }
 
 .loading-content {
@@ -129,17 +162,17 @@ button {
     letter-spacing: clamp(2px, 1vw, 12px);
     line-height: .95;
     opacity: 0;
-    animation: titleReveal 1s cubic-bezier(.16,1,.3,1) .5s forwards;
+    animation: titleReveal 1s cubic-bezier(.16, 1, .3, 1) .5s forwards;
 }
 
 .gradient-text {
     color: transparent;
     background: linear-gradient(
         100deg,
-        #f6f8ff 5%,
-        #c5d9ff 35%,
-        #429eff 56%,
-        #ff365b 85%
+        #168bff 0%,
+        #4169ff 35%,
+        #a52cff 55%,
+        #ff254d 100%
     );
     background-clip: text;
     -webkit-background-clip: text;
@@ -151,6 +184,7 @@ button {
         transform: scaleX(1.12) translateY(18px);
         filter: blur(12px);
     }
+
     to {
         opacity: 1;
         transform: scaleX(1) translateY(0);
@@ -159,8 +193,15 @@ button {
 }
 
 @keyframes fadeUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .loading-subtitle {
@@ -189,20 +230,27 @@ button {
 }
 
 .status {
-    color: #8bbcff;
+    color: #579eff;
 }
 
 .bar {
     width: 100%;
     height: 2px;
     background: #18202d;
+    overflow: hidden;
 }
 
 .bar-fill {
     width: 0;
     height: 100%;
-    background: linear-gradient(90deg, var(--blue), #d5eaff, var(--red));
+    background: linear-gradient(
+        90deg,
+        #168bff,
+        #7045ff,
+        #ff254d
+    );
     box-shadow: 0 0 12px #328bff;
+    transition: width .08s linear;
 }
 
 .loading-footer {
@@ -212,6 +260,7 @@ button {
     right: 28px;
     display: flex;
     justify-content: space-between;
+    gap: 16px;
     color: #4f5b70;
     font: 9px monospace;
     letter-spacing: 1px;
@@ -224,10 +273,12 @@ button {
 #introScreen {
     z-index: 1;
     background:
-        radial-gradient(ellipse at 50% 50%,
+        radial-gradient(
+            ellipse at 50% 50%,
             #111b2b 0%,
             #070a11 43%,
-            #030408 80%);
+            #030408 80%
+        );
 }
 
 .intro-content {
@@ -257,7 +308,7 @@ button {
     width: 6px;
     height: 6px;
     border-radius: 50%;
-    background: #49a4ff;
+    background: #168bff;
     box-shadow: 0 0 10px #168bff;
 }
 
@@ -277,7 +328,12 @@ button {
 .intro-title .second-line {
     margin-top: 8px;
     color: transparent;
-    background: linear-gradient(90deg, #fff, #91bfff, #ff5270);
+    background: linear-gradient(
+        90deg,
+        #168bff,
+        #7045ff,
+        #ff254d
+    );
     background-clip: text;
     -webkit-background-clip: text;
 }
@@ -298,8 +354,14 @@ button {
     gap: 30px;
     margin-top: 36px;
     padding: 17px 23px;
-    border: 1px solid #edf4ff;
-    background: #edf4ff;
+    border: 1px solid #4169ff;
+    border-radius: 0;
+    background: linear-gradient(
+        110deg,
+        #168bff,
+        #7045ff,
+        #ff254d
+    );
     color: #080b12;
     font-size: 10px;
     font-weight: 800;
@@ -310,7 +372,8 @@ button {
         background .25s ease,
         color .25s ease,
         border-color .25s ease,
-        transform .25s ease;
+        transform .25s ease,
+        box-shadow .25s ease;
 }
 
 .enter-button span {
@@ -319,9 +382,15 @@ button {
 }
 
 .enter-button:hover {
-    color: white;
-    background: #101a2a;
-    border-color: var(--blue);
+    color: #ffffff;
+    background: linear-gradient(
+        110deg,
+        #126bd1,
+        #5930d8,
+        #d91f45
+    );
+    border-color: #ff254d;
+    box-shadow: 0 0 25px #7045ff44;
     transform: translateY(-3px);
 }
 
@@ -343,41 +412,74 @@ button {
     opacity: 0;
 }
 
-/* Decorative edge lines */
+/* NOT WORKING LINK */
+
+.not-working {
+    position: absolute;
+    bottom: 55px;
+    right: 28px;
+    z-index: 3;
+    color: #68758b;
+    font-size: 11px;
+    text-decoration: none;
+    opacity: 0;
+    transition: color .2s ease;
+}
+
+#introScreen.play .not-working {
+    animation: fadeUp .7s ease 1.1s forwards;
+}
+
+.not-working:hover {
+    color: #ff5270;
+    text-decoration: underline;
+}
+
+/* DECORATIVE EDGE LINES */
 
 .edge {
     position: absolute;
     width: 1px;
     height: 0;
-    background: linear-gradient(transparent, #168bff, transparent);
     opacity: .65;
 }
 
 .edge.left {
     left: 8%;
     top: 20%;
+    background: linear-gradient(
+        transparent,
+        #168bff,
+        transparent
+    );
     animation: edgeGrow 1.1s ease .4s forwards;
 }
 
 .edge.right {
     right: 8%;
     bottom: 20%;
-    background: linear-gradient(transparent, #ff254d, transparent);
+    background: linear-gradient(
+        transparent,
+        #ff254d,
+        transparent
+    );
     animation: edgeGrow 1.1s ease .6s forwards;
 }
 
 @keyframes edgeGrow {
-    to { height: 60%; }
+    to {
+        height: 60%;
+    }
 }
 
-/* Intro entrance animations */
+/* INTRO ENTRANCE ANIMATIONS */
 
 #introScreen.play .intro-tag {
     animation: fadeUp .7s ease .2s forwards;
 }
 
 #introScreen.play .intro-title {
-    animation: titleReveal .9s cubic-bezier(.16,1,.3,1) .45s forwards;
+    animation: titleReveal .9s cubic-bezier(.16, 1, .3, 1) .45s forwards;
 }
 
 #introScreen.play .intro-description {
@@ -392,13 +494,18 @@ button {
     animation: fadeUp .7s ease .8s forwards;
 }
 
-/* Screen transition flash */
+/* SCREEN TRANSITION FLASH */
 
 .flash {
     position: fixed;
     z-index: 10;
     inset: 0;
-    background: white;
+    background: linear-gradient(
+        110deg,
+        #168bff,
+        #7045ff,
+        #ff254d
+    );
     opacity: 0;
     pointer-events: none;
 }
@@ -408,26 +515,59 @@ button {
 }
 
 @keyframes flashOut {
-    0% { opacity: 0; }
-    20% { opacity: .75; }
-    100% { opacity: 0; }
+    0% {
+        opacity: 0;
+    }
+
+    20% {
+        opacity: .65;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }
 
+/* MOBILE */
+
 @media (max-width: 480px) {
-    .eyebrow { letter-spacing: 4px; }
-    .loading-subtitle { letter-spacing: 2px; }
-    .intro-description { font-size: 13px; }
-    .loading-footer, .intro-bottom {
+    .eyebrow {
+        letter-spacing: 4px;
+    }
+
+    .loading-subtitle {
+        letter-spacing: 2px;
+    }
+
+    .intro-description {
+        font-size: 13px;
+    }
+
+    .loading-footer,
+    .intro-bottom {
         left: 15px;
         right: 15px;
         font-size: 8px;
     }
-    .edge.left { left: 4%; }
-    .edge.right { right: 4%; }
+
+    .not-working {
+        right: 15px;
+        bottom: 52px;
+    }
+
+    .edge.left {
+        left: 4%;
+    }
+
+    .edge.right {
+        right: 4%;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
         animation-duration: .01ms !important;
         animation-delay: 0ms !important;
         transition-duration: .01ms !important;
@@ -441,11 +581,15 @@ button {
 <!-- SCREEN 1: LOADING -->
 
 <section class="screen" id="loadingScreen">
+
     <div class="streak blue"></div>
     <div class="streak red"></div>
 
     <div class="loading-content">
-        <p class="eyebrow">A new experience begins</p>
+
+        <p class="eyebrow">
+            A new experience begins
+        </p>
 
         <h1 class="loading-title">
             <span class="gradient-text">CELESTIAL</span>
@@ -456,30 +600,39 @@ button {
         </p>
 
         <div class="boot">
+
             <div class="boot-top">
                 <span id="bootText">INITIALIZING SYSTEM</span>
                 <span class="status" id="percentage">00%</span>
             </div>
+
             <div class="bar">
                 <div class="bar-fill" id="barFill"></div>
             </div>
+
         </div>
+
     </div>
 
     <div class="loading-footer">
         <span>CL / SYSTEM ONLINE</span>
         <span>BUILT FOR WHAT'S NEXT</span>
     </div>
+
 </section>
 
-<!-- SCREEN 2: SEPARATE INTRO -->
+<!-- SCREEN 2: INTRO -->
 
 <section class="screen hidden" id="introScreen">
+
     <div class="edge left"></div>
     <div class="edge right"></div>
 
     <div class="intro-content">
-        <div class="intro-tag">WELCOME TO THE NEXT ERA</div>
+
+        <div class="intro-tag">
+            WELCOME TO THE NEXT ERA
+        </div>
 
         <h2 class="intro-title">
             <span class="line">THIS IS</span>
@@ -496,12 +649,23 @@ button {
             ENTER CELESTIAL
             <span>↗</span>
         </button>
+
     </div>
+
+    <a
+        class="not-working"
+        href="https://forms.gle/iQWQQA77qtMUwnrWA"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        Not Working?
+    </a>
 
     <div class="intro-bottom">
         <span>CELESTIAL V2.0</span>
         <span>YOUR WORLD STARTS HERE</span>
     </div>
+
 </section>
 
 <div class="flash" id="flash"></div>
@@ -526,6 +690,7 @@ let entering = false;
 
 function showIntro() {
     if (loadingComplete) return;
+
     loadingComplete = true;
 
     percentage.textContent = "100%";
@@ -579,6 +744,7 @@ function updateLoading(timestamp) {
 
 enterButton.addEventListener("click", () => {
     if (entering) return;
+
     entering = true;
 
     flash.classList.add("fire");
@@ -594,3 +760,4 @@ requestAnimationFrame(updateLoading);
 
 </body>
 </html>
+```
