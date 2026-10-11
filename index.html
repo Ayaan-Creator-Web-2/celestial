@@ -1,11 +1,9 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Celestial</title>
+<title>Celestial V2</title>
 
 <style>
 * {
@@ -14,599 +12,425 @@
     box-sizing: border-box;
 }
 
-html,
-body {
+:root {
+    --blue: #168bff;
+    --red: #ff254d;
+    --white: #f5f7ff;
+}
+
+html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: #000;
-}
-
-body {
+    background: #030408;
+    color: var(--white);
     font-family: Arial, Helvetica, sans-serif;
 }
 
-/* =========================================
-   INTRO SCREEN
-========================================= */
+button {
+    font: inherit;
+}
 
-#intro {
+.screen {
     position: fixed;
     inset: 0;
-    z-index: 9999;
-
-    background: #000;
-
+    overflow: hidden;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    overflow: hidden;
-
-    opacity: 1;
-
-    transition:
-        opacity 1.2s ease,
-        visibility 1.2s ease;
-}
-
-/* =========================================
-   BACKGROUND RED GLOW
-========================================= */
-
-.glow {
-    position: absolute;
-
-    width: 45vw;
-    height: 45vw;
-
-    border-radius: 50%;
-
-    background: #e50914;
-
-    filter: blur(120px);
-
-    opacity: 0;
-
-    animation:
-        glowIn
-        3.5s
-        ease
-        forwards;
-}
-
-/* =========================================
-   LIGHT BEAMS
-========================================= */
-
-.beam {
-    position: absolute;
-
-    top: -100%;
-    width: 4px;
-    height: 300%;
-
     background:
-        linear-gradient(
-            to bottom,
-            transparent,
-            rgba(229, 9, 20, 0.9),
-            transparent
-        );
+        radial-gradient(ellipse at 50% 60%,
+            #101827 0%,
+            #080b12 38%,
+            #030408 78%);
+    transition: opacity .7s ease, transform .7s ease;
+}
 
-    filter: blur(5px);
-
+.screen.hidden {
     opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
 }
 
-.beam1 {
-    left: 15%;
-    transform: rotate(35deg);
-
-    animation:
-        beamMove
-        3s
-        0.3s
-        ease-out
-        forwards;
-}
-
-.beam2 {
-    left: 40%;
-    transform: rotate(35deg);
-
-    animation:
-        beamMove
-        3s
-        0.6s
-        ease-out
-        forwards;
-}
-
-.beam3 {
-    left: 65%;
-    transform: rotate(35deg);
-
-    animation:
-        beamMove
-        3s
-        0.9s
-        ease-out
-        forwards;
-}
-
-.beam4 {
-    left: 90%;
-    transform: rotate(35deg);
-
-    animation:
-        beamMove
-        3s
-        1.2s
-        ease-out
-        forwards;
-}
-
-/* =========================================
-   LOGO
-========================================= */
-
-.logo {
-    position: relative;
-
-    width: 190px;
-    height: 280px;
-
+.screen.leaving {
     opacity: 0;
-
-    transform:
-        scale(0.25)
-        rotate(-18deg);
-
-    animation:
-        logoReveal
-        2.7s
-        0.5s
-        cubic-bezier(0.16, 1, 0.3, 1)
-        forwards;
+    transform: scale(1.04);
+    pointer-events: none;
 }
 
-/* =========================================
-   THE CELESTIAL C
-========================================= */
+/* =========================
+   SCREEN 1: LOADING
+========================= */
 
-.c {
-    position: absolute;
-
-    inset: 0;
-
-    border:
-        52px
-        solid
-        #e50914;
-
-    border-right-color: transparent;
-
-    border-radius: 50%;
-
-    transform: rotate(-35deg);
-
-    filter:
-        drop-shadow(0 0 8px #e50914)
-        drop-shadow(0 0 25px #e50914)
-        drop-shadow(0 0 70px rgba(229, 9, 20, 0.45));
+#loadingScreen {
+    z-index: 2;
 }
 
-/* Extra inner highlight */
-
-.c::before {
-    content: "";
-
+.streak {
     position: absolute;
-
-    inset: -52px;
-
-    border:
-        2px
-        solid
-        rgba(255, 255, 255, 0.35);
-
-    border-right-color: transparent;
-
-    border-radius: 50%;
-
-    opacity: 0;
-
-    animation:
-        shine
-        1s
-        2.3s
-        ease
-        forwards;
-}
-
-/* =========================================
-   CENTER GLOW
-========================================= */
-
-.core {
-    position: absolute;
-
-    width: 35px;
-    height: 35px;
-
-    left: 50%;
-    top: 50%;
-
-    transform:
-        translate(-50%, -50%);
-
-    border-radius: 50%;
-
-    background: #ff1824;
-
-    box-shadow:
-        0 0 20px #e50914,
-        0 0 50px #e50914,
-        0 0 100px rgba(229, 9, 20, 0.5);
-
-    opacity: 0;
-
-    animation:
-        coreIn
-        1.2s
-        2.2s
-        ease
-        forwards;
-}
-
-/* =========================================
-   CELESTIAL TEXT
-========================================= */
-
-.title {
-    position: absolute;
-
-    left: 50%;
-
-    top:
-        calc(50% + 185px);
-
-    transform:
-        translateX(-50%);
-
-    color: white;
-
-    font-size: 22px;
-
-    font-weight: 700;
-
-    letter-spacing: 14px;
-
-    white-space: nowrap;
-
-    opacity: 0;
-
-    filter: blur(12px);
-
-    animation:
-        titleIn
-        1.5s
-        3.1s
-        cubic-bezier(0.16, 1, 0.3, 1)
-        forwards;
-}
-
-/* =========================================
-   RED LINE
-========================================= */
-
-.line {
-    position: absolute;
-
-    left: 50%;
-
-    top:
-        calc(50% + 225px);
-
-    transform:
-        translateX(-50%);
-
-    width: 0;
+    left: -120%;
+    width: 140%;
     height: 2px;
-
-    background: #e50914;
-
-    box-shadow:
-        0 0 12px #e50914,
-        0 0 30px rgba(229, 9, 20, 0.7);
-
-    animation:
-        lineIn
-        1s
-        3.6s
-        ease
-        forwards;
-}
-
-/* =========================================
-   VIGNETTE
-========================================= */
-
-.vignette {
-    position: absolute;
-
-    inset: 0;
-
-    pointer-events: none;
-
-    background:
-        radial-gradient(
-            circle,
-            transparent 15%,
-            rgba(0, 0, 0, 0.9) 100%
-        );
-}
-
-/* =========================================
-   FILM GRAIN
-========================================= */
-
-.grain {
-    position: absolute;
-
-    inset: -50%;
-
-    opacity: 0.045;
-
-    pointer-events: none;
-
-    background-image:
-        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-
-    animation:
-        grainMove
-        0.15s
-        steps(2)
-        infinite;
-}
-
-/* =========================================
-   SKIP BUTTON
-========================================= */
-
-#skip {
-    position: absolute;
-
-    right: 28px;
-    bottom: 25px;
-
-    z-index: 100;
-
-    padding:
-        11px
-        18px;
-
-    border:
-        1px
-        solid
-        rgba(255, 255, 255, 0.25);
-
-    border-radius: 999px;
-
-    background:
-        rgba(255, 255, 255, 0.07);
-
-    color:
-        rgba(255, 255, 255, 0.8);
-
-    backdrop-filter:
-        blur(15px);
-
-    cursor: pointer;
-
-    font-size: 12px;
-
-    letter-spacing: 1px;
-
     opacity: 0;
-
-    animation:
-        skipIn
-        1s
-        3.8s
-        forwards;
+    transform: rotate(-12deg);
+    pointer-events: none;
 }
 
-#skip:hover {
+.streak.blue {
+    top: 35%;
+    background: linear-gradient(
+        90deg, transparent, var(--blue), #d7edff, transparent
+    );
+    box-shadow: 0 0 20px var(--blue);
+    animation: streakBlue 1.1s ease-out .3s forwards;
+}
+
+.streak.red {
+    top: 66%;
+    background: linear-gradient(
+        90deg, transparent, var(--red), #ffd1da, transparent
+    );
+    box-shadow: 0 0 20px var(--red);
+    animation: streakRed 1.1s ease-out .7s forwards;
+}
+
+@keyframes streakBlue {
+    0% { left: -120%; opacity: 0; }
+    15% { opacity: 1; }
+    100% { left: 120%; opacity: 0; }
+}
+
+@keyframes streakRed {
+    0% { left: -120%; opacity: 0; }
+    15% { opacity: 1; }
+    100% { left: 120%; opacity: 0; }
+}
+
+.loading-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 24px;
+    text-align: center;
+}
+
+.eyebrow {
+    color: #8d9ab0;
+    font-size: 10px;
+    letter-spacing: 7px;
+    text-transform: uppercase;
+    animation: fadeUp .7s ease .3s both;
+}
+
+.loading-title {
+    margin: 24px 0 18px;
+    font-size: clamp(42px, 10vw, 112px);
+    font-weight: 900;
+    letter-spacing: clamp(2px, 1vw, 12px);
+    line-height: .95;
+    opacity: 0;
+    animation: titleReveal 1s cubic-bezier(.16,1,.3,1) .5s forwards;
+}
+
+.gradient-text {
+    color: transparent;
+    background: linear-gradient(
+        100deg,
+        #f6f8ff 5%,
+        #c5d9ff 35%,
+        #429eff 56%,
+        #ff365b 85%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+}
+
+@keyframes titleReveal {
+    from {
+        opacity: 0;
+        transform: scaleX(1.12) translateY(18px);
+        filter: blur(12px);
+    }
+    to {
+        opacity: 1;
+        transform: scaleX(1) translateY(0);
+        filter: blur(0);
+    }
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.loading-subtitle {
+    color: #7d899f;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    animation: fadeUp .7s ease 1s both;
+}
+
+.boot {
+    width: min(300px, 75vw);
+    margin: 44px auto 0;
+    text-align: left;
+    animation: fadeUp .5s ease 1.2s both;
+}
+
+.boot-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #7c8ca7;
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: 2px;
+}
+
+.status {
+    color: #8bbcff;
+}
+
+.bar {
+    width: 100%;
+    height: 2px;
+    background: #18202d;
+}
+
+.bar-fill {
+    width: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue), #d5eaff, var(--red));
+    box-shadow: 0 0 12px #328bff;
+}
+
+.loading-footer {
+    position: absolute;
+    bottom: 25px;
+    left: 28px;
+    right: 28px;
+    display: flex;
+    justify-content: space-between;
+    color: #4f5b70;
+    font: 9px monospace;
+    letter-spacing: 1px;
+}
+
+/* =========================
+   SCREEN 2: INTRO
+========================= */
+
+#introScreen {
+    z-index: 1;
     background:
-        rgba(229, 9, 20, 0.25);
-
-    border-color:
-        #e50914;
-
-    color:
-        white;
+        radial-gradient(ellipse at 50% 50%,
+            #111b2b 0%,
+            #070a11 43%,
+            #030408 80%);
 }
 
-/* =========================================
-   ANIMATIONS
-========================================= */
-
-@keyframes glowIn {
-
-    0% {
-        opacity: 0;
-        transform: scale(0.2);
-    }
-
-    45% {
-        opacity: 0.35;
-        transform: scale(1);
-    }
-
-    100% {
-        opacity: 0.08;
-        transform: scale(1.5);
-    }
+.intro-content {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    padding: 24px;
+    text-align: center;
 }
 
-@keyframes beamMove {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            translateX(-50vw)
-            rotate(35deg);
-    }
-
-    30% {
-        opacity: 0.8;
-    }
-
-    100% {
-        opacity: 0;
-
-        transform:
-            translateX(50vw)
-            rotate(35deg);
-    }
+.intro-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 13px;
+    border: 1px solid #273348;
+    background: #0c111b;
+    color: #a9bad3;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: 0;
 }
 
-@keyframes logoReveal {
-
-    0% {
-        opacity: 0;
-
-        transform:
-            scale(0.25)
-            rotate(-18deg);
-    }
-
-    35% {
-        opacity: 1;
-    }
-
-    70% {
-        transform:
-            scale(1.08)
-            rotate(3deg);
-    }
-
-    100% {
-        opacity: 1;
-
-        transform:
-            scale(1)
-            rotate(0deg);
-    }
+.intro-tag::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #49a4ff;
+    box-shadow: 0 0 10px #168bff;
 }
 
-@keyframes shine {
-
-    to {
-        opacity: 1;
-    }
+.intro-title {
+    margin: 30px 0 18px;
+    font-size: clamp(44px, 10vw, 116px);
+    font-weight: 900;
+    line-height: .95;
+    letter-spacing: clamp(1px, .8vw, 9px);
+    opacity: 0;
 }
 
-@keyframes coreIn {
-
-    to {
-        opacity: 0.4;
-    }
+.intro-title .line {
+    display: block;
 }
 
-@keyframes titleIn {
-
-    0% {
-        opacity: 0;
-
-        letter-spacing: 30px;
-
-        filter:
-            blur(12px);
-    }
-
-    100% {
-        opacity: 1;
-
-        letter-spacing: 11px;
-
-        filter:
-            blur(0);
-    }
+.intro-title .second-line {
+    margin-top: 8px;
+    color: transparent;
+    background: linear-gradient(90deg, #fff, #91bfff, #ff5270);
+    background-clip: text;
+    -webkit-background-clip: text;
 }
 
-@keyframes lineIn {
-
-    to {
-        width: 250px;
-    }
+.intro-description {
+    max-width: 460px;
+    margin: 25px auto 0;
+    color: #8995a9;
+    font-size: 14px;
+    line-height: 1.9;
+    opacity: 0;
 }
 
-@keyframes skipIn {
-
-    to {
-        opacity: 1;
-    }
+.enter-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 36px;
+    padding: 17px 23px;
+    border: 1px solid #edf4ff;
+    background: #edf4ff;
+    color: #080b12;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+        background .25s ease,
+        color .25s ease,
+        border-color .25s ease,
+        transform .25s ease;
 }
 
-@keyframes grainMove {
-
-    0% {
-        transform:
-            translate(0, 0);
-    }
-
-    25% {
-        transform:
-            translate(2%, -1%);
-    }
-
-    50% {
-        transform:
-            translate(-1%, 2%);
-    }
-
-    75% {
-        transform:
-            translate(1%, 1%);
-    }
-
-    100% {
-        transform:
-            translate(0, 0);
-    }
+.enter-button span {
+    font-size: 17px;
+    transition: transform .25s ease;
 }
 
-/* =========================================
-   MOBILE
-========================================= */
+.enter-button:hover {
+    color: white;
+    background: #101a2a;
+    border-color: var(--blue);
+    transform: translateY(-3px);
+}
 
-@media (max-width: 600px) {
+.enter-button:hover span {
+    transform: translateX(5px);
+}
 
-    .logo {
-        width: 135px;
-        height: 205px;
+.intro-bottom {
+    position: absolute;
+    bottom: 26px;
+    left: 28px;
+    right: 28px;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    color: #4f5b70;
+    font: 9px monospace;
+    letter-spacing: 1px;
+    opacity: 0;
+}
+
+/* Decorative edge lines */
+
+.edge {
+    position: absolute;
+    width: 1px;
+    height: 0;
+    background: linear-gradient(transparent, #168bff, transparent);
+    opacity: .65;
+}
+
+.edge.left {
+    left: 8%;
+    top: 20%;
+    animation: edgeGrow 1.1s ease .4s forwards;
+}
+
+.edge.right {
+    right: 8%;
+    bottom: 20%;
+    background: linear-gradient(transparent, #ff254d, transparent);
+    animation: edgeGrow 1.1s ease .6s forwards;
+}
+
+@keyframes edgeGrow {
+    to { height: 60%; }
+}
+
+/* Intro entrance animations */
+
+#introScreen.play .intro-tag {
+    animation: fadeUp .7s ease .2s forwards;
+}
+
+#introScreen.play .intro-title {
+    animation: titleReveal .9s cubic-bezier(.16,1,.3,1) .45s forwards;
+}
+
+#introScreen.play .intro-description {
+    animation: fadeUp .7s ease .8s forwards;
+}
+
+#introScreen.play .enter-button {
+    animation: fadeUp .7s ease 1.05s forwards;
+}
+
+#introScreen.play .intro-bottom {
+    animation: fadeUp .7s ease .8s forwards;
+}
+
+/* Screen transition flash */
+
+.flash {
+    position: fixed;
+    z-index: 10;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.flash.fire {
+    animation: flashOut .55s ease forwards;
+}
+
+@keyframes flashOut {
+    0% { opacity: 0; }
+    20% { opacity: .75; }
+    100% { opacity: 0; }
+}
+
+@media (max-width: 480px) {
+    .eyebrow { letter-spacing: 4px; }
+    .loading-subtitle { letter-spacing: 2px; }
+    .intro-description { font-size: 13px; }
+    .loading-footer, .intro-bottom {
+        left: 15px;
+        right: 15px;
+        font-size: 8px;
     }
+    .edge.left { left: 4%; }
+    .edge.right { right: 4%; }
+}
 
-    .c {
-        border-width: 37px;
-    }
-
-    .title {
-        font-size: 15px;
-
-        letter-spacing: 8px;
-
-        top:
-            calc(50% + 145px);
-    }
-
-    .line {
-        top:
-            calc(50% + 180px);
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: .01ms !important;
     }
 }
 </style>
@@ -614,127 +438,159 @@ body {
 
 <body>
 
-<div id="intro">
+<!-- SCREEN 1: LOADING -->
 
-    <!-- Background -->
-    <div class="glow"></div>
+<section class="screen" id="loadingScreen">
+    <div class="streak blue"></div>
+    <div class="streak red"></div>
 
-    <!-- Moving beams -->
-    <div class="beam beam1"></div>
-    <div class="beam beam2"></div>
-    <div class="beam beam3"></div>
-    <div class="beam beam4"></div>
+    <div class="loading-content">
+        <p class="eyebrow">A new experience begins</p>
 
-    <!-- Logo -->
-    <div class="logo">
+        <h1 class="loading-title">
+            <span class="gradient-text">CELESTIAL</span>
+        </h1>
 
-        <div class="c"></div>
+        <p class="loading-subtitle">
+            Version 2.0 · Beyond the ordinary
+        </p>
 
-        <div class="core"></div>
-
+        <div class="boot">
+            <div class="boot-top">
+                <span id="bootText">INITIALIZING SYSTEM</span>
+                <span class="status" id="percentage">00%</span>
+            </div>
+            <div class="bar">
+                <div class="bar-fill" id="barFill"></div>
+            </div>
+        </div>
     </div>
 
-    <!-- Text -->
-    <div class="title">
-        CELESTIAL
+    <div class="loading-footer">
+        <span>CL / SYSTEM ONLINE</span>
+        <span>BUILT FOR WHAT'S NEXT</span>
+    </div>
+</section>
+
+<!-- SCREEN 2: SEPARATE INTRO -->
+
+<section class="screen hidden" id="introScreen">
+    <div class="edge left"></div>
+    <div class="edge right"></div>
+
+    <div class="intro-content">
+        <div class="intro-tag">WELCOME TO THE NEXT ERA</div>
+
+        <h2 class="intro-title">
+            <span class="line">THIS IS</span>
+            <span class="line second-line">CELESTIAL.</span>
+        </h2>
+
+        <p class="intro-description">
+            Your gateway to games, entertainment and more.
+            <br>
+            Everything you want. One place.
+        </p>
+
+        <button class="enter-button" id="enterButton">
+            ENTER CELESTIAL
+            <span>↗</span>
+        </button>
     </div>
 
-    <!-- Red underline -->
-    <div class="line"></div>
+    <div class="intro-bottom">
+        <span>CELESTIAL V2.0</span>
+        <span>YOUR WORLD STARTS HERE</span>
+    </div>
+</section>
 
-    <!-- Screen effects -->
-    <div class="vignette"></div>
-
-    <div class="grain"></div>
-
-    <!-- Skip -->
-    <button id="skip">
-        SKIP INTRO
-    </button>
-
-</div>
-
+<div class="flash" id="flash"></div>
 
 <script>
+const loadingScreen = document.getElementById("loadingScreen");
+const introScreen = document.getElementById("introScreen");
+const percentage = document.getElementById("percentage");
+const bootText = document.getElementById("bootText");
+const barFill = document.getElementById("barFill");
+const enterButton = document.getElementById("enterButton");
+const flash = document.getElementById("flash");
 
-/* =========================================
-   YOUR ACTUAL CELESTIAL WEBSITE
-========================================= */
-
-const CELESTIAL_URL =
+const destination =
     "https://sites.google.com/view/celestial-2/home";
 
+const loadingDuration = 4200;
 
-/* =========================================
-   ELEMENTS
-========================================= */
+let startedAt = null;
+let loadingComplete = false;
+let entering = false;
 
-const intro =
-    document.getElementById("intro");
+function showIntro() {
+    if (loadingComplete) return;
+    loadingComplete = true;
 
-const skip =
-    document.getElementById("skip");
+    percentage.textContent = "100%";
+    barFill.style.width = "100%";
+    bootText.textContent = "SYSTEM READY";
 
+    loadingScreen.classList.add("leaving");
 
-/* =========================================
-   ENTER CELESTIAL
-========================================= */
+    setTimeout(() => {
+        loadingScreen.classList.add("hidden");
+        loadingScreen.classList.remove("leaving");
 
-function enterCelestial() {
-
-    /*
-       Fade the intro to black first.
-       This makes the page transition
-       feel much more cinematic.
-    */
-
-    intro.style.opacity = "0";
-
-    /*
-       Wait for the fade to finish,
-       then go to the real Celestial site.
-    */
-
-    setTimeout(function () {
-
-        window.location.href =
-            CELESTIAL_URL;
-
-    }, 1200);
+        introScreen.classList.remove("hidden");
+        introScreen.classList.add("play");
+    }, 700);
 }
 
+function updateLoading(timestamp) {
+    if (loadingComplete) return;
 
-/* =========================================
-   AUTOMATIC REDIRECT
-========================================= */
-
-/*
-   Intro duration:
-   approximately 6 seconds.
-*/
-
-setTimeout(function () {
-
-    enterCelestial();
-
-}, 6000);
-
-
-/* =========================================
-   SKIP BUTTON
-========================================= */
-
-skip.addEventListener(
-    "click",
-    function () {
-
-        enterCelestial();
-
+    if (startedAt === null) {
+        startedAt = timestamp;
     }
-);
 
+    const elapsed = timestamp - startedAt;
+    const progress = Math.min(elapsed / loadingDuration, 1);
+    const percent = Math.floor(progress * 100);
+
+    percentage.textContent =
+        String(percent).padStart(2, "0") + "%";
+
+    barFill.style.width = percent + "%";
+
+    if (percent < 25) {
+        bootText.textContent = "INITIALIZING SYSTEM";
+    } else if (percent < 55) {
+        bootText.textContent = "LOADING INTERFACE";
+    } else if (percent < 85) {
+        bootText.textContent = "SYNCHRONIZING MODULES";
+    } else {
+        bootText.textContent = "PREPARING CELESTIAL";
+    }
+
+    if (progress >= 1) {
+        showIntro();
+        return;
+    }
+
+    requestAnimationFrame(updateLoading);
+}
+
+enterButton.addEventListener("click", () => {
+    if (entering) return;
+    entering = true;
+
+    flash.classList.add("fire");
+    introScreen.classList.add("leaving");
+
+    setTimeout(() => {
+        window.location.href = destination;
+    }, 550);
+});
+
+requestAnimationFrame(updateLoading);
 </script>
 
 </body>
 </html>
-```
